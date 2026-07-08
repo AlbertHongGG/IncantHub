@@ -30,13 +30,9 @@ export class PoliteCommunicatorAgent extends BaseAgent {
     };
   }
 
-  async execute(inputs: Record<string, any>, options?: any): Promise<any> {
+  protected async process(inputs: Record<string, any>, options?: any): Promise<any> {
     const rawText = inputs['raw_text'];
     const audience = inputs['target_audience'] || 'general professional audience';
-
-    if (!rawText) {
-      throw new Error('raw_text is required');
-    }
 
     const systemPrompt = buildSystemPrompt(audience);
     const userPrompt = buildUserPrompt(rawText);

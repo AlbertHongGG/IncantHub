@@ -1,7 +1,7 @@
 import { BaseAgent } from '../BaseAgent';
 import type { AgentMetadata } from '../../models/AgentMetadata';
 import { AIProvider } from '../../../../../_Framework/MultiAgent/src/providers/AIProvider';
-import { buildSystemPrompt, buildImageArray } from './prompt';
+import { buildVirtualTryOnPayload } from './prompt';
 
 export class VirtualTryOnAgent extends BaseAgent {
   constructor(provider: AIProvider) {
@@ -43,22 +43,13 @@ export class VirtualTryOnAgent extends BaseAgent {
     };
   }
 
-  async execute(inputs: Record<string, any>, options?: any): Promise<any> {
+  protected async process(inputs: Record<string, any>, options?: any): Promise<any> {
     const sourceImage = inputs['source_image'];
-    const clothingImages = inputs['clothing_images'] || [];
+    const clothingImages = inputs['clothing_images'];
     const poseImage = inputs['pose_image'];
     const textPrompt = inputs['prompt'] || 'Make the character wear these clothes naturally.';
 
-    if (!sourceImage || sourceImage.length === 0) {
-      throw new Error('source_image is required');
-    }
-    if (!clothingImages || clothingImages.length === 0) {
-      throw new Error('clothing_images are required');
-    }
-
-    const hasPose = poseImage && poseImage.length > 0;
-    const systemPrompt = buildSystemPrompt(hasPose);
-    const allImages = buildImageArray(sourceImage, clothingImages, poseImage);
+    const { systemPrompt, allImages } = buildVirtualTryOnPayload(sourceImage, clothingImages, poseImage);
 
     const response = await this.provider.generate({
       prompt: textPrompt,
