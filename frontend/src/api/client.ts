@@ -13,7 +13,20 @@ export const apiClient = {
   getPrompts: async (): Promise<PromptMetadata[]> => {
     const res = await fetch(`${API_URL}/prompts`);
     if (!res.ok) throw new Error('Failed to fetch prompts');
-    return res.json();
+    const data = await res.json();
+    
+    const prompts: PromptMetadata[] = [];
+    for (const categoryId in data) {
+      for (const config of data[categoryId]) {
+        prompts.push({
+          id: config.id,
+          title: config.name,
+          description: config.description,
+          category: config.categoryId as 'text' | 'image',
+        });
+      }
+    }
+    return prompts;
   },
   executePrompt: async (id: string, userPrompt: string, images?: string[]): Promise<string> => {
     const res = await fetch(`${API_URL}/prompts/${id}/execute`, {
