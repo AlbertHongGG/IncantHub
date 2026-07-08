@@ -1,24 +1,26 @@
 import { AgentConfig } from './agents/core/AgentConfig';
-import { AgentStorage } from './agents/storage/AgentStorage';
+import { AgentStorage, GroupedAgentConfigs } from './agents/storage/AgentStorage';
 import { DynamicPromptAgent } from './agents/core/DynamicPromptAgent';
 import { IPromptAgent } from './agents/core/IPromptAgent';
 
 export class AgentRegistry {
   private agents: Map<string, IPromptAgent> = new Map();
-  private configs: AgentConfig[] = [];
+  private groupedConfigs: GroupedAgentConfigs = {};
 
   async init() {
     try {
-      this.configs = await AgentStorage.loadAll();
+      this.groupedConfigs = await AgentStorage.loadAll();
       this.agents.clear();
       
-      for (const config of this.configs) {
-        try {
-          const agentInstance = new DynamicPromptAgent(config);
-          this.agents.set(config.id, agentInstance);
-          console.log(`[AgentRegistry] Loaded Data-Driven Agent: ${config.id}`);
-        } catch (err: any) {
-          console.error(`[AgentRegistry] Failed to initialize agent ${config.id}:`, err.message);
+      for (const categoryId in this.groupedConfigs) {
+        for (const config of this.groupedConfigs[categoryId]) {
+          try {
+            const agentInstance = new DynamicPromptAgent(config);
+            this.agents.set(config.id, agentInstance);
+            console.log(`[AgentRegistry] Loaded Data-Driven Agent: ${config.id}`);
+          } catch (err: any) {
+            console.error(`[AgentRegistry] Failed to initialize agent ${config.id}:`, err.message);
+          }
         }
       }
     } catch (err) {
@@ -31,41 +33,71 @@ export class AgentRegistry {
     return this.agents.get(id);
   }
 
-  getAllConfigs(): AgentConfig[] {
-    return this.configs;
+  getAllConfigs(): GroupedAgentConfigs {
+    return this.groupedConfigs;
+  }
+
+  private findConfig(id: string): { categoryId: string, index: number } | null {
+    for (const categoryId in this.groupedConfigs) {
+      const index = this.groupedConfigs[categoryId].findIndex(c => c.id === id);
+      if (index !== -1) {
+        return { categoryId, index };
+      }
+    }
+    return null;
   }
 
   async addAgent(config: AgentConfig): Promise<void> {
-    if (this.configs.some(c => c.id === config.id)) {
+    if (this.findConfig(config.id)) {
       throw new Error(`Agent with ID ${config.id} already exists`);
     }
-    this.configs.push(config);
-    await AgentStorage.saveAll(this.configs);
+    
+    if (!this.groupedConfigs[config.categoryId]) {
+      this.groupedConfigs[config.categoryId] = [];
+    }
+    
+    this.groupedConfigs[config.categoryId].push(config);
+    await AgentStorage.saveAll(this.groupedConfigs);
     
     const agentInstance = new DynamicPromptAgent(config);
     this.agents.set(config.id, agentInstance);
   }
 
   async updateAgent(id: string, config: AgentConfig): Promise<void> {
-    const index = this.configs.findIndex(c => c.id === id);
-    if (index === -1) {
+    const found = this.findConfig(id);
+    if (!found) {
       throw new Error(`Agent with ID ${id} not found`);
     }
     
-    this.configs[index] = { ...config, id }; 
-    await AgentStorage.saveAll(this.configs);
+    if (found.categoryId !== config.categoryId) {
+      this.groupedConfigs[found.categoryId].splice(found.index, 1);
+      if (!this.groupedConfigs[config.categoryId]) {
+        this.groupedConfigs[config.categoryId] = [];
+      }
+      this.groupedConfigs[config.categoryId].push({ ...config, id });
+    } else {
+      this.groupedConfigs[found.categoryId][found.index] = { ...config, id };
+    }
     
-    const agentInstance = new DynamicPromptAgent(this.configs[index]);
+    await AgentStorage.saveAll(this.groupedConfigs);
+    
+    const agentInstance = new DynamicPromptAgent({ ...config, id });
     this.agents.set(id, agentInstance);
   }
 
   async deleteAgent(id: string): Promise<void> {
-    const index = this.configs.findIndex(c => c.id === id);
-    if (index === -1) {
+    const found = this.findConfig(id);
+    if (!found) {
       throw new Error(`Agent with ID ${id} not found`);
     }
-    this.configs.splice(index, 1);
-    await AgentStorage.saveAll(this.configs);
+    
+    this.groupedConfigs[found.categoryId].splice(found.index, 1);
+    
+    if (this.groupedConfigs[found.categoryId].length === 0) {
+      delete this.groupedConfigs[found.categoryId];
+    }
+    
+    await AgentStorage.saveAll(this.groupedConfigs);
     this.agents.delete(id);
   }
 }
