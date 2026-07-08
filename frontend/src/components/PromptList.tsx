@@ -10,40 +10,45 @@ const IconMap: Record<string, React.ElementType> = {
 };
 
 export function PromptList() {
-  const { prompts, activeCategory, fetchPrompts, selectPrompt, selectedPromptId, isLoading } = usePromptStore();
+  const agents = usePromptStore(state => state.agents);
+  const activeCategory = usePromptStore(state => state.activeCategory);
+  const fetchAgents = usePromptStore(state => state.fetchAgents);
+  const selectAgent = usePromptStore(state => state.selectAgent);
+  const selectedAgentId = usePromptStore(state => state.selectedAgentId);
+  const isLoading = usePromptStore(state => state.isLoading);
 
   useEffect(() => {
-    fetchPrompts();
-  }, [fetchPrompts]);
+    fetchAgents();
+  }, [fetchAgents]);
 
-  const filteredPrompts = prompts.filter(p => p.category === activeCategory);
+  const filteredAgents = agents.filter(a => a.category === activeCategory);
 
-  if (isLoading) return <div className="prompt-list-loading">Loading templates...</div>;
+  if (isLoading) return <div className="prompt-list-loading">Loading agents...</div>;
 
   return (
     <div className="prompt-list animate-fade-in">
-      <h3 className="section-title">Templates</h3>
+      <h3 className="section-title">Agents</h3>
       <div className="card-grid">
-        {filteredPrompts.map(prompt => {
-          const IconComponent = prompt.icon ? IconMap[prompt.icon] || FileText : FileText;
+        {filteredAgents.map(agent => {
+          const IconComponent = agent.icon ? IconMap[agent.icon] || FileText : FileText;
           return (
             <div 
-              key={prompt.id} 
-              className={`prompt-card ${selectedPromptId === prompt.id ? 'selected' : ''}`}
-              onClick={() => selectPrompt(prompt.id)}
+              key={agent.id} 
+              className={`prompt-card ${selectedAgentId === agent.id ? 'selected' : ''}`}
+              onClick={() => selectAgent(agent.id)}
             >
               <div className="card-icon-wrapper">
                 <IconComponent className="card-icon" size={24} />
               </div>
               <div className="card-content">
-                <h4>{prompt.title}</h4>
-                <p>{prompt.description}</p>
+                <h4>{agent.name}</h4>
+                <p>{agent.description}</p>
               </div>
             </div>
           );
         })}
-        {filteredPrompts.length === 0 && (
-          <div className="empty-state">No templates found for this category.</div>
+        {filteredAgents.length === 0 && (
+          <div className="empty-state">No agents found for this category.</div>
         )}
       </div>
     </div>

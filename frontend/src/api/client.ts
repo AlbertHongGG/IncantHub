@@ -1,38 +1,36 @@
-export interface PromptMetadata {
+export interface FieldSchema {
+  type: 'text' | 'image';
+  label: string;
+  required: boolean;
+  maxCount?: number;
+}
+
+export interface InputSchema {
+  [fieldName: string]: FieldSchema;
+}
+
+export interface AgentMetadata {
   id: string;
-  title: string;
+  name: string;
+  category: string;
   description: string;
-  category: 'text' | 'image';
-  tags?: string[];
   icon?: string;
+  inputSchema: InputSchema;
 }
 
 export const API_URL = 'http://localhost:3001/api';
 
 export const apiClient = {
-  getPrompts: async (): Promise<PromptMetadata[]> => {
+  getAgents: async (): Promise<AgentMetadata[]> => {
     const res = await fetch(`${API_URL}/prompts`);
-    if (!res.ok) throw new Error('Failed to fetch prompts');
-    const data = await res.json();
-    
-    const prompts: PromptMetadata[] = [];
-    for (const categoryId in data) {
-      for (const config of data[categoryId]) {
-        prompts.push({
-          id: config.id,
-          title: config.name,
-          description: config.description,
-          category: config.categoryId as 'text' | 'image',
-        });
-      }
-    }
-    return prompts;
+    if (!res.ok) throw new Error('Failed to fetch agents');
+    return res.json();
   },
-  executePrompt: async (id: string, userPrompt: string, images?: string[]): Promise<string> => {
+  executeAgent: async (id: string, payload: Record<string, any>): Promise<string> => {
     const res = await fetch(`${API_URL}/prompts/${id}/execute`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userPrompt, images })
+      body: JSON.stringify(payload)
     });
     if (!res.ok) {
       const err = await res.json();

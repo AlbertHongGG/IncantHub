@@ -1,15 +1,12 @@
 import { Router } from 'express';
 import { AgentController } from './AgentController';
-import { AgentService } from '../agents/services/AgentService';
+import { AgentService } from '../services/AgentService';
 
 export function createAgentRoutes(service: AgentService): Router {
   const router = Router();
   const controller = new AgentController(service);
 
-  router.get('/', controller.getAllConfigs);
-  router.post('/', controller.createAgent);
-  router.put('/:id', controller.updateAgent);
-  router.delete('/:id', controller.deleteAgent);
+  router.get('/', controller.getAllAgents);
   router.post('/:id/execute', controller.executeAgent);
 
   return router;
