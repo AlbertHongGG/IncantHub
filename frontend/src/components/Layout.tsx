@@ -1,27 +1,19 @@
 import React from 'react';
 import { usePromptStore } from '../store/usePromptStore';
-import { Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
+import { Sparkles, AlertCircle, RefreshCw, MoreVertical } from 'lucide-react';
+import { NotificationContainer } from './ui/Notification';
+import { Dropdown } from './ui/Dropdown';
 import './Layout.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const isServerOffline = usePromptStore(state => state.isServerOffline);
   const fetchAgents = usePromptStore(state => state.fetchAgents);
+  const setCategory = usePromptStore(state => state.setCategory);
 
   return (
     <div className="layout-root">
-      {/* Offline Banner */}
-      {isServerOffline && (
-        <div className="offline-banner">
-          <div className="offline-banner-content">
-            <AlertCircle size={16} />
-            <span>Backend server is offline. Please run <code>npm run dev</code> in the backend directory.</span>
-          </div>
-          <button className="reconnect-btn" onClick={fetchAgents}>
-            <RefreshCw size={12} />
-            <span>Reconnect</span>
-          </button>
-        </div>
-      )}
+      {/* Mount global toasts container */}
+      <NotificationContainer />
 
       {/* Clean Top Header */}
       <header className="main-header">
@@ -30,6 +22,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <span>IncantHub</span>
         </div>
         <div className="header-status">
+          <Dropdown>
+            <Dropdown.Trigger>
+              <button type="button" className="header-menu-trigger">
+                <MoreVertical size={16} />
+              </button>
+            </Dropdown.Trigger>
+            <Dropdown.Menu align="right">
+              <Dropdown.Item onClick={() => setCategory('text')}>Text Engine Portal</Dropdown.Item>
+              <Dropdown.Item onClick={() => setCategory('image')}>Image Engine Portal</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
           <span className={`status-dot ${isServerOffline ? 'offline' : 'online'}`} />
           <span className="status-text">{isServerOffline ? 'Offline' : 'Connected'}</span>
         </div>

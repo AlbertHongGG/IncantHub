@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { usePromptStore } from '../store/usePromptStore';
+import { useNotificationStore } from '../store/useNotificationStore';
+import { Tooltip } from './ui/Tooltip';
 import { Play, Loader2, UploadCloud, X, Copy, Check, ChevronLeft, AlertTriangle } from 'lucide-react';
 import './PromptExecution.css';
 
@@ -13,16 +15,29 @@ export function PromptExecution() {
   const error = usePromptStore(state => state.error);
   const isServerOffline = usePromptStore(state => state.isServerOffline);
 
+  const addNotification = useNotificationStore(state => state.addNotification);
+
   const [payload, setPayload] = useState<Record<string, any>>({});
-  const [copied, setCopied] = useState(false);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const selectedAgent = agents.find(p => p.id === selectedAgentId);
 
   useEffect(() => {
     setPayload({});
-    setCopied(false);
   }, [selectedAgentId]);
+
+  // Notifications for success and error states
+  useEffect(() => {
+    if (error) {
+      addNotification(error, 'error');
+    }
+  }, [error, addNotification]);
+
+  useEffect(() => {
+    if (executionResult) {
+      addNotification('Agent executed successfully!', 'success');
+    }
+  }, [executionResult, addNotification]);
 
   if (!selectedAgent) return null;
 
@@ -64,8 +79,7 @@ export function PromptExecution() {
   const handleCopy = () => {
     if (executionResult) {
       navigator.clipboard.writeText(executionResult);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      addNotification('Copied output to clipboard!', 'success');
     }
   };
 
@@ -75,7 +89,11 @@ export function PromptExecution() {
         <div className="workspace-input-field" key={fieldName}>
           <div className="field-label-row">
             <span className="field-title">{schema.label}</span>
-            {schema.required && <span className="required-indicator">Required</span>}
+            {schema.required && (
+              <Tooltip content="This parameter is required to proceed" position="top">
+                <span className="required-indicator">Required</span>
+              </Tooltip>
+            )}
           </div>
           <textarea 
             placeholder={`Enter ${schema.label.toLowerCase()} here...`}

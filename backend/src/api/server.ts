@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { config } from '../config'; 
-import { AgentService } from '../agents/services/AgentService';
+import { AgentService } from '../services/AgentService';
 import { createAgentRoutes } from './AgentRoutes';
 
 const app = express();

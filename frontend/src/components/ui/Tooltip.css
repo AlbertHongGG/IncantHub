@@ -1,0 +1,81 @@
+.tooltip-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.tooltip-tip {
+  position: absolute;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  color: white;
+  background-color: #0f172a; /* Deep charcoal for high contrast */
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Position-specific layouts & animations */
+.tooltip-tip.top {
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 6px;
+  transform: translateX(-50%) translateY(4px);
+  animation: tooltipFadeInTop 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.tooltip-tip.bottom {
+  top: 100%;
+  left: 50%;
+  margin-top: 6px;
+  transform: translateX(-50%) translateY(-4px);
+  animation: tooltipFadeInBottom 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.tooltip-tip.left {
+  right: 100%;
+  top: 50%;
+  margin-right: 6px;
+  transform: translateY(-50%) translateX(4px);
+  animation: tooltipFadeInLeft 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.tooltip-tip.right {
+  left: 100%;
+  top: 50%;
+  margin-left: 6px;
+  transform: translateY(-50%) translateX(-4px);
+  animation: tooltipFadeInRight 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Micro-transition keyframes */
+@keyframes tooltipFadeInTop {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes tooltipFadeInBottom {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes tooltipFadeInLeft {
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+@keyframes tooltipFadeInRight {
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
