@@ -12,14 +12,41 @@ const registry = new AgentRegistry();
 async function startServer() {
   try {
     await registry.init();
-    console.log('[Server] AgentRegistry Auto-Discovery completed successfully.');
+    console.log('[Server] AgentRegistry Data-Driven engine initialized successfully.');
   } catch (e) {
-    console.error("[Server] Failed to initialize AgentRegistry. Check your configuration and providers:", e);
+    console.error("[Server] Failed to initialize AgentRegistry:", e);
     process.exit(1);
   }
 
   app.get('/api/prompts', (req, res) => {
-    res.json(registry.getAllMetadata());
+    res.json(registry.getAllConfigs());
+  });
+
+  app.post('/api/prompts', async (req, res) => {
+    try {
+      await registry.addAgent(req.body);
+      res.status(201).json({ message: 'Agent created successfully' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.put('/api/prompts/:id', async (req, res) => {
+    try {
+      await registry.updateAgent(req.params.id, req.body);
+      res.json({ message: 'Agent updated successfully' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete('/api/prompts/:id', async (req, res) => {
+    try {
+      await registry.deleteAgent(req.params.id);
+      res.json({ message: 'Agent deleted successfully' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   });
 
   app.post('/api/prompts/:id/execute', async (req, res) => {

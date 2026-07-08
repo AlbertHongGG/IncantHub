@@ -4,18 +4,13 @@ import { OllamaProvider } from './ollama/OllamaProvider';
 import { VertexAIProvider } from './vertexai/VertexAIProvider';
 
 export class ProviderFactory {
-  static createProvider(agentName: string): AIProvider {
-    const envPrefix = `AGENT_${agentName.toUpperCase()}_`;
-    
-    const providerType = process.env[`${envPrefix}PROVIDER`];
-    const model = process.env[`${envPrefix}MODEL`];
-
+  static createProvider(providerType: string, model: string): AIProvider {
     if (!providerType) {
-      throw new Error(`Configuration Error: Missing ${envPrefix}PROVIDER in .env`);
+      throw new Error(`Configuration Error: providerType is required`);
     }
 
     if (!model) {
-      throw new Error(`Configuration Error: Missing ${envPrefix}MODEL in .env`);
+      throw new Error(`Configuration Error: model is required`);
     }
 
     switch (providerType.toLowerCase()) {
@@ -32,7 +27,8 @@ export class ProviderFactory {
         return new OllamaProvider(model, url);
       }
 
-      case 'vertex': {
+      case 'vertex':
+      case 'vertexai': {
         const projectId = process.env.PROVIDER_VERTEX_PROJECT_ID;
         const region = process.env.PROVIDER_VERTEX_REGION;
         const accessToken = process.env.PROVIDER_VERTEX_ACCESS_TOKEN;
@@ -45,7 +41,7 @@ export class ProviderFactory {
       }
       
       default:
-        throw new Error(`Configuration Error: Unsupported provider type '${providerType}' for agent '${agentName}'`);
+        throw new Error(`Configuration Error: Unsupported provider type '${providerType}'`);
     }
   }
 }
