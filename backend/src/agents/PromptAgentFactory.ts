@@ -1,19 +1,19 @@
-import { IPromptAgent } from './IPromptAgent';
-import { ArticleSummarizerAgent } from './ArticleSummarizerAgent';
-import { MarketingCopyAgent } from './MarketingCopyAgent';
-import { ImageDescriberAgent } from './ImageDescriberAgent';
+import { IPromptAgent } from './core/IPromptAgent';
+import { ArticleSummarizerAgent } from './text/ArticleSummarizerAgent';
+import { MarketingCopyAgent } from './text/MarketingCopyAgent';
+import { ImageDescriberAgent } from './image/ImageDescriberAgent';
 
 export class PromptAgentFactory {
   static createAgent(agentId: string): IPromptAgent {
     switch (agentId) {
-      case 'article-summarizer':
+      case 'ArticleSummarizer':
         return new ArticleSummarizerAgent();
-      case 'marketing-copy':
+      case 'MarketingCopy':
         return new MarketingCopyAgent();
-      case 'image-describer':
+      case 'ImageDescriber':
         return new ImageDescriberAgent();
       default:
-        throw new Error(`Factory Error: Unknown agent id '${agentId}'`);
+        throw new Error(`Unknown agent ID: ${agentId}`);
     }
   }
 }

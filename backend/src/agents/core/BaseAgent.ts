@@ -1,4 +1,4 @@
-import { AIProvider } from '../providers/AIProvider';
+import { AIProvider } from '../../providers/AIProvider';
 
 export interface Agent {
   readonly name: string;

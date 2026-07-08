@@ -21,7 +21,7 @@ app.get('/api/prompts', (req, res) => {
 
 app.post('/api/prompts/:id/execute', async (req, res) => {
   const { id } = req.params;
-  const { userPrompt, images } = req.body;
+  const { userPrompt, images, sessionId } = req.body;
   
   const agent = registry.getAgent(id);
   if (!agent) {
@@ -29,8 +29,8 @@ app.post('/api/prompts/:id/execute', async (req, res) => {
   }
   
   try {
-    const result = await agent.executePrompt({ userPrompt, images });
-    res.json({ result });
+    const result = await agent.executePrompt(userPrompt, { images, sessionId });
+    res.json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
