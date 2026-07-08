@@ -26,3 +26,26 @@ export const config = {
     port: parseInt(process.env.PORT as string, 10),
   }
 };
+
+/**
+ * Dynamically resolves Agent-specific configurations from environment variables.
+ * Strictly throws an error if variables are not defined (no default values).
+ */
+export function getAgentConfig(agentId: string): { provider: string; model: string } {
+  const normalizedId = agentId.toUpperCase().replace(/-/g, '_');
+  const providerEnv = `AGENT_${normalizedId}_PROVIDER`;
+  const modelEnv = `AGENT_${normalizedId}_MODEL`;
+
+  const provider = process.env[providerEnv];
+  const model = process.env[modelEnv];
+
+  if (!provider) {
+    throw new Error(`CRITICAL CONFIG ERROR: Agent provider environment variable '${providerEnv}' is not defined.`);
+  }
+
+  if (!model) {
+    throw new Error(`CRITICAL CONFIG ERROR: Agent model environment variable '${modelEnv}' is not defined.`);
+  }
+
+  return { provider, model };
+}

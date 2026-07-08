@@ -1,5 +1,5 @@
-import { BaseAgent } from '../BaseAgent';
-import type { AgentMetadata } from '../../models/AgentMetadata';
+import { BaseAgent } from '../../BaseAgent';
+import type { AgentMetadata } from '../../../models/AgentMetadata';
 import { AIProvider } from '../../../../../_Framework/MultiAgent/src/providers/AIProvider';
 import { buildSystemPrompt, buildUserPrompt } from './prompt';
 

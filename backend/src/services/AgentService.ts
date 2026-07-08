@@ -1,17 +1,23 @@
 import { BaseAgent } from '../agents/BaseAgent';
 import type { AgentMetadata } from '../models/AgentMetadata';
-import { PoliteCommunicatorAgent } from '../agents/PoliteCommunicator';
-import { VirtualTryOnAgent } from '../agents/VirtualTryOn';
+import { loadAllAgents } from '../agents';
 import { ProviderFactory } from '../providers/ProviderFactory';
+import { getAgentConfig } from '../config';
 
 export class AgentService {
   private registry: Map<string, BaseAgent> = new Map();
 
   async init() {
     console.log('[AgentService] Initializing pure OOP Agent Registry...');
-    const provider = ProviderFactory.createProvider('geminiflow', 'gemini-1.5-flash');
-    this.registerAgent(new PoliteCommunicatorAgent(provider));
-    this.registerAgent(new VirtualTryOnAgent(provider));
+    
+    const agents = loadAllAgents((agentId) => {
+      const { provider, model } = getAgentConfig(agentId);
+      return ProviderFactory.createProvider(provider, model);
+    });
+
+    for (const agent of agents) {
+      this.registerAgent(agent);
+    }
   }
 
   registerAgent(agent: BaseAgent) {
