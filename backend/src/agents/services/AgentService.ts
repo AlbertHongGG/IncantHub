@@ -1,36 +1,25 @@
-import { AgentConfig } from './agents/core/AgentConfig';
-import { AgentStorage, GroupedAgentConfigs } from './agents/storage/AgentStorage';
-import { DynamicPromptAgent } from './agents/core/DynamicPromptAgent';
-import { IPromptAgent } from './agents/core/IPromptAgent';
+import { AgentConfig } from '../models/AgentConfig';
+import { AgentStorage, GroupedAgentConfigs } from '../storage/AgentStorage';
 
-export class AgentRegistry {
-  private agents: Map<string, IPromptAgent> = new Map();
+export class AgentService {
   private groupedConfigs: GroupedAgentConfigs = {};
 
   async init() {
     try {
       this.groupedConfigs = await AgentStorage.loadAll();
-      this.agents.clear();
-      
-      for (const categoryId in this.groupedConfigs) {
-        for (const config of this.groupedConfigs[categoryId]) {
-          try {
-            const agentInstance = new DynamicPromptAgent(config);
-            this.agents.set(config.id, agentInstance);
-            console.log(`[AgentRegistry] Loaded Data-Driven Agent: ${config.id}`);
-          } catch (err: any) {
-            console.error(`[AgentRegistry] Failed to initialize agent ${config.id}:`, err.message);
-          }
-        }
-      }
+      console.log('[AgentService] Loaded Data-Driven Configurations successfully.');
     } catch (err) {
-      console.error('[AgentRegistry] Failed to load agents from storage:', err);
+      console.error('[AgentService] Failed to load agents from storage:', err);
       throw err;
     }
   }
 
-  getAgent(id: string): IPromptAgent | undefined {
-    return this.agents.get(id);
+  getAgentConfig(id: string): AgentConfig | undefined {
+    const found = this.findConfig(id);
+    if (found) {
+      return this.groupedConfigs[found.categoryId][found.index];
+    }
+    return undefined;
   }
 
   getAllConfigs(): GroupedAgentConfigs {
@@ -58,9 +47,6 @@ export class AgentRegistry {
     
     this.groupedConfigs[config.categoryId].push(config);
     await AgentStorage.saveAll(this.groupedConfigs);
-    
-    const agentInstance = new DynamicPromptAgent(config);
-    this.agents.set(config.id, agentInstance);
   }
 
   async updateAgent(id: string, config: AgentConfig): Promise<void> {
@@ -80,9 +66,6 @@ export class AgentRegistry {
     }
     
     await AgentStorage.saveAll(this.groupedConfigs);
-    
-    const agentInstance = new DynamicPromptAgent({ ...config, id });
-    this.agents.set(id, agentInstance);
   }
 
   async deleteAgent(id: string): Promise<void> {
@@ -93,11 +76,6 @@ export class AgentRegistry {
     
     this.groupedConfigs[found.categoryId].splice(found.index, 1);
     
-    if (this.groupedConfigs[found.categoryId].length === 0) {
-      delete this.groupedConfigs[found.categoryId];
-    }
-    
     await AgentStorage.saveAll(this.groupedConfigs);
-    this.agents.delete(id);
   }
 }

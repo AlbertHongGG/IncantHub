@@ -1,25 +1,18 @@
-import { AgentCategory } from '../core/AgentCategory';
+import { AgentCategory } from '../models/AgentCategory';
 
-export const TextCategory: AgentCategory = {
-  id: 'text',
-  name: 'Text Processing',
-  inputExplanation: `你將會收到使用者提供的一段或多段文字內容 (\`input\`)。
-你的任務是身為專業的文本處理引擎，針對該段文字進行深度的語意分析、萃取或是生成。
-請確保你完全理解上下文與言外之意，並依據具體的任務指示 (Task Instruction) 來處理這段輸入。`,
-  inputSchema: `Format:
-{
-  "input": "string 表示使用者輸入的原始文字或具體需求"
-}`,
-  outputExplanation: `你的輸出將會直接被後端系統解析，因此格式的正確性至關重要。
-在 \`thought\` 欄位中，請詳細記錄你的思考拆解過程、邏輯推演，這有助於提高你最終結果的品質（Chain of Thought）。
-在 \`result\` 欄位中，請放置你最終處理完成、排版整齊的文字結果。`,
-  outputSchema: `Format:
-{
-  "thought": "string 表示你的分析與思考過程（逐步拆解問題的邏輯）",
-  "result": "string 表示最終生成或處理完成的文字結果"
-}`,
-  hardRules: `- 僅可輸出純 JSON 格式，絕對不可輸出任何 Markdown 標記（如 \`\`\`json 標籤）、敘述文字或註解。
-- 輸出的 JSON 必須精確符合 OUTPUT_SCHEMA 的結構定義，所有鍵值名稱需大小寫一致。
-- 嚴格維持單一的 JSON Object 回傳，不要在 JSON 前後夾雜任何說明或對話。
-- 如果遇到無法解析或處理的輸入，請在 thought 中說明原因，並在 result 中回傳友善的錯誤提示。`
-};
+export class TextCategory implements AgentCategory {
+  public readonly id = 'text';
+  public readonly name = 'Text Processing';
+  public readonly inputExplanation = '你將會收到使用者提供的純文字輸入 (`input`)。請根據這些內容與你的 `role` 設定進行處理。';
+  public readonly inputSchema = `{
+  "input": "string"
+}`;
+  public readonly outputExplanation = '請嚴格遵守以下 JSON 格式輸出，不要包含任何 Markdown 標記，純粹返回 JSON 字串。';
+  public readonly outputSchema = `{
+  "thought": "string // 你處理這個任務的思考過程、摘要邏輯或是任何需要記錄的分析",
+  "result": "any // 根據你的任務目標，產生的最終文字結果。這可能是一段總結、一篇文案或是一段分析報告。"
+}`;
+  public readonly hardRules = `- 你必須且只能使用 JSON 格式進行回覆。
+- 絕對不要在回覆前後加上 \`\`\`json 或任何額外的文字。
+- \`result\` 欄位必須精準滿足 \`taskInstruction\` 的要求。`;
+}
