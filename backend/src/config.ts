@@ -10,15 +10,9 @@ if (!fs.existsSync(envPath)) {
 
 dotenv.config({ path: envPath });
 
+// 只驗證全域伺服器所需的參數，具體 Agent 的參數將在其實例化時由 ProviderFactory 進行校驗
 const requiredEnvVars = [
-  'PORT',
-  'PROVIDER_GEMINIFLOW_URL',
-  'AGENT_ARTICLESUMMARIZER_PROVIDER',
-  'AGENT_ARTICLESUMMARIZER_MODEL',
-  'AGENT_MARKETINGCOPY_PROVIDER',
-  'AGENT_MARKETINGCOPY_MODEL',
-  'AGENT_IMAGEDESCRIBER_PROVIDER',
-  'AGENT_IMAGEDESCRIBER_MODEL'
+  'PORT'
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -30,22 +24,5 @@ for (const envVar of requiredEnvVars) {
 export const config = {
   server: {
     port: parseInt(process.env.PORT as string, 10),
-  },
-  providers: {
-    geminiflowUrl: process.env.PROVIDER_GEMINIFLOW_URL as string,
-  },
-  agents: {
-    articleSummarizer: {
-      provider: process.env.AGENT_ARTICLESUMMARIZER_PROVIDER as string,
-      model: process.env.AGENT_ARTICLESUMMARIZER_MODEL as string,
-    },
-    marketingCopy: {
-      provider: process.env.AGENT_MARKETINGCOPY_PROVIDER as string,
-      model: process.env.AGENT_MARKETINGCOPY_MODEL as string,
-    },
-    imageDescriber: {
-      provider: process.env.AGENT_IMAGEDESCRIBER_PROVIDER as string,
-      model: process.env.AGENT_IMAGEDESCRIBER_MODEL as string,
-    }
   }
 };
