@@ -10,11 +10,14 @@ interface PromptState {
   isExecuting: boolean;
   executionResult: string | null;
   error: string | null;
+  searchQuery: string;
+  isServerOffline: boolean;
 
   setCategory: (category: 'text' | 'image') => void;
-  selectAgent: (id: string) => void;
+  selectAgent: (id: string | null) => void;
   fetchAgents: () => Promise<void>;
   executeAgent: (payload: Record<string, any>) => Promise<void>;
+  setSearchQuery: (query: string) => void;
 }
 
 export const usePromptStore = create<PromptState>((set, get) => ({
@@ -25,17 +28,22 @@ export const usePromptStore = create<PromptState>((set, get) => ({
   isExecuting: false,
   executionResult: null,
   error: null,
+  searchQuery: '',
+  isServerOffline: false,
 
   setCategory: (category) => set({ activeCategory: category, selectedAgentId: null, executionResult: null, error: null }),
   selectAgent: (id) => set({ selectedAgentId: id, executionResult: null, error: null }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
   
   fetchAgents: async () => {
     set({ isLoading: true, error: null });
     try {
       const agents = await apiClient.getAgents();
-      set({ agents, isLoading: false });
+      set({ agents, isLoading: false, isServerOffline: false });
     } catch (e: any) {
-      set({ error: e.message, isLoading: false });
+      console.error('[PromptStore] Fetch agents error:', e);
+      // Mark server as offline if fetch fails (typically ERR_CONNECTION_REFUSED)
+      set({ error: e.message, isLoading: false, isServerOffline: true });
     }
   },
 
@@ -46,9 +54,15 @@ export const usePromptStore = create<PromptState>((set, get) => ({
     set({ isExecuting: true, executionResult: null, error: null });
     try {
       const result = await apiClient.executeAgent(selectedAgentId, payload);
-      set({ executionResult: result, isExecuting: false });
+      set({ executionResult: result, isExecuting: false, isServerOffline: false });
     } catch (e: any) {
-      set({ error: e.message, isExecuting: false });
+      console.error('[PromptStore] Execute agent error:', e);
+      const isConnectionRefused = e.message.includes('Failed to fetch') || e.message.includes('connection');
+      set({ 
+        error: e.message, 
+        isExecuting: false,
+        isServerOffline: isConnectionRefused ? true : get().isServerOffline
+      });
     }
   }
 }));
