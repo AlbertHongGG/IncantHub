@@ -60,6 +60,11 @@ export function TagInput({ tags, availableTags, onAddTag, onRemoveTag, placehold
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && inputValue === '' && tags.length > 0) {
+      onRemoveTag(tags[tags.length - 1]);
+      return;
+    }
+
     if (!isOpen && e.key === 'Enter') {
       // Prevent form submission if inside a form
       e.preventDefault();
