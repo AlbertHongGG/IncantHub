@@ -57,56 +57,64 @@ export function PromptList() {
 
   return (
     <div className="gallery-layout animate-fade-in">
-      <div className="gallery-toolbar">
-        <div className="toolbar-search">
-          <Search size={16} className="search-icon" />
-          <Input 
-            type="text" 
-            placeholder="Search templates..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input-override"
-            fullWidth
-          />
-        </div>
-        <div className="toolbar-stats">
-          <span className="stats-badge">{filteredAgents.length}</span>
-        </div>
-      </div>
+      <div className="gallery-toolbar-container">
+        <div className="gallery-main-toolbar">
+          <div className="toolbar-left-group">
+            <div className="toolbar-search">
+              <Search size={16} className="search-icon" />
+              <input 
+                type="text" 
+                placeholder="Search templates..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input-raw"
+              />
+            </div>
+            
+            <div className="toolbar-categories">
+              {['text', 'image'].map(cat => {
+                const isSelected = selectedCategories.includes(cat);
+                return (
+                  <button 
+                    key={cat}
+                    className={`category-tab ${isSelected ? 'active' : ''}`}
+                    onClick={() => toggleCategoryFilter(cat)}
+                  >
+                    {cat === 'text' ? <FileText size={14} /> : <ImageIcon size={14} />}
+                    <span>{cat}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-      <div className="global-tag-filters">
-        {/* Category Filters */}
-        <div className="filter-group">
-          {['text', 'image'].map(cat => {
-            const isSelected = selectedCategories.includes(cat);
-            return (
-              <button 
-                key={cat}
-                className={`tag-pill category-pill ${isSelected ? 'selected' : ''}`}
-                onClick={() => toggleCategoryFilter(cat)}
-              >
-                {cat === 'text' ? <FileText size={12} className="pill-icon" /> : <ImageIcon size={12} className="pill-icon" />}
-                <span style={{ textTransform: 'capitalize' }}>{cat}</span>
-              </button>
-            );
-          })}
+          <div className="toolbar-right-group">
+            <div className="toolbar-stats">
+              <span className="stats-badge">{filteredAgents.length} Agents</span>
+            </div>
+          </div>
         </div>
 
-        {/* Dynamic Tag Filters */}
         {availableTags.length > 0 && (
-          <div className="filter-group tag-filters-divider">
-            {availableTags.map(tag => {
-              const isSelected = selectedTags.includes(tag);
-              return (
-                <button 
-                  key={tag}
-                  className={`tag-pill ${isSelected ? 'selected' : ''}`}
-                  onClick={() => toggleTagFilter(tag)}
-                >
-                  {tag}
-                </button>
-              );
-            })}
+          <div className="gallery-tags-toolbar">
+            <div className="tags-toolbar-label">
+              <Tags size={14} />
+              <span>Tags</span>
+            </div>
+            <div className="tags-scroll-area">
+              {availableTags.map(tag => {
+                const isSelected = selectedTags.includes(tag);
+                return (
+                  <button 
+                    key={tag}
+                    className={`tag-pill ${isSelected ? 'selected' : ''}`}
+                    onClick={() => toggleTagFilter(tag)}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
