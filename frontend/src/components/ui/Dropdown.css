@@ -1,79 +1,66 @@
-.dropdown {
+.ui-dropdown {
   position: relative;
   display: inline-block;
 }
 
-.dropdown-trigger-btn {
+.ui-dropdown-trigger {
   cursor: pointer;
+  display: inline-flex;
 }
 
-/* Dropdown Menu Overlay */
-.dropdown-menu {
+.ui-dropdown-menu {
   position: absolute;
-  top: 100%;
-  margin-top: 6px;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-main);
+  top: calc(100% + var(--space-2));
+  min-width: 180px;
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
-  padding: 6px;
-  min-width: 160px;
-  z-index: 1000;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-popover);
+  padding: var(--space-1);
+  z-index: 50;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  transform-origin: top;
-  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.dropdown-menu.left {
+.ui-dropdown-menu.align-left {
   left: 0;
 }
 
-.dropdown-menu.right {
+.ui-dropdown-menu.align-right {
   right: 0;
 }
 
-/* Option Items */
-.dropdown-item {
-  width: 100%;
-  border: none;
-  background: transparent;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-align: left;
-  cursor: pointer;
+.ui-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
 }
 
-.dropdown-item:hover {
-  background-color: var(--bg-main);
-  color: var(--text-main);
+.ui-dropdown-item:hover {
+  background-color: var(--color-bg-subtle);
 }
 
-.dropdown-item.danger {
-  color: var(--danger);
+.ui-dropdown-icon {
+  margin-right: var(--space-2);
+  display: inline-flex;
+  color: var(--color-text-secondary);
 }
 
-.dropdown-item.danger:hover {
-  background-color: var(--danger-bg);
-  color: var(--danger);
+.ui-dropdown-item:hover .ui-dropdown-icon {
+  color: var(--color-text-primary);
 }
 
-/* Animations */
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96) translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+.ui-dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border-default);
+  margin: var(--space-1) 0;
 }

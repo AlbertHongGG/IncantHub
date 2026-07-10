@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { usePromptStore } from '../store/usePromptStore';
-import { FileText, Image as ImageIcon, PenTool, Search, Grid } from 'lucide-react';
+import { FileText, Image as ImageIcon, PenTool, Search, LayoutGrid, ArrowRight } from 'lucide-react';
+import { Input } from './ui/Input';
 import './PromptList.css';
 
 const IconMap: Record<string, React.ElementType> = {
@@ -10,114 +11,91 @@ const IconMap: Record<string, React.ElementType> = {
 };
 
 export function PromptList() {
-  const agents = usePromptStore(state => state.agents);
-  const activeCategory = usePromptStore(state => state.activeCategory);
-  const setCategory = usePromptStore(state => state.setCategory);
-  const selectedAgentId = usePromptStore(state => state.selectedAgentId);
-  const selectAgent = usePromptStore(state => state.selectAgent);
-  const fetchAgents = usePromptStore(state => state.fetchAgents);
-  const isLoading = usePromptStore(state => state.isLoading);
-  const searchQuery = usePromptStore(state => state.searchQuery);
-  const setSearchQuery = usePromptStore(state => state.setSearchQuery);
+  const { 
+    agents, 
+    activeCategory, 
+    selectAgent, 
+    fetchAgents, 
+    isLoading, 
+    searchQuery, 
+    setSearchQuery 
+  } = usePromptStore();
 
   useEffect(() => {
     fetchAgents();
   }, [fetchAgents]);
 
-  // Filter agents by search query AND active category
-  const filteredAgents = agents.filter(agent => {
-    const matchesCategory = agent.category === activeCategory;
-    const matchesSearch = 
-      agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      agent.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredAgents = useMemo(() => {
+    return agents.filter(agent => {
+      const matchesCategory = agent.category === activeCategory;
+      const matchesSearch = agent.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [agents, activeCategory, searchQuery]);
 
   if (isLoading) {
     return (
-      <div className="portal-loading">
-        <div className="portal-loading-spinner" />
+      <div className="gallery-layout loading-state">
+        <div className="skeleton-grid">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="gallery-card skeleton animate-pulse" />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="catalog-portal animate-fade-in-up">
-      {/* Intro section */}
-      <section className="portal-intro">
-        <h1>Template Catalog</h1>
-        <p>Select a pre-configured AI Agent template to launch your workspace.</p>
-      </section>
-
-      {/* Control bar (Search + Filter tabs) */}
-      <div className="portal-controls">
-        <div className="search-bar-wrapper">
+    <div className="gallery-layout animate-fade-in">
+      <div className="gallery-toolbar">
+        <div className="toolbar-search">
           <Search size={16} className="search-icon" />
-          <input 
+          <Input 
             type="text" 
-            placeholder="Search templates by name or capabilities..."
+            placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="portal-search-input"
+            className="search-input-override"
+            fullWidth
           />
         </div>
-
-        <div className="portal-tabs">
-          <button 
-            className={`portal-tab-btn ${activeCategory === 'text' ? 'active' : ''}`}
-            onClick={() => setCategory('text')}
-          >
-            <span>Text Engines</span>
-          </button>
-          <button 
-            className={`portal-tab-btn ${activeCategory === 'image' ? 'active' : ''}`}
-            onClick={() => setCategory('image')}
-          >
-            <span>Image Engines</span>
-          </button>
+        <div className="toolbar-stats">
+          <span className="stats-badge">{filteredAgents.length}</span>
         </div>
       </div>
 
-      {/* Grid view of Agents */}
-      <div className="catalog-grid-wrapper">
-        <div className="catalog-grid">
-          {filteredAgents.map(agent => {
-            const IconComponent = agent.icon ? IconMap[agent.icon] || FileText : FileText;
-            
-            return (
-              <div 
-                key={agent.id} 
-                className="catalog-card"
-                onClick={() => selectAgent(agent.id)}
-              >
-                <div className="card-header-row">
-                  <div className="card-icon-box">
-                    <IconComponent size={18} />
-                  </div>
-                  <span className="card-category-tag">{agent.category}</span>
+      <div className="gallery-grid">
+        {filteredAgents.map((agent, idx) => {
+          const IconComponent = agent.icon ? IconMap[agent.icon] || FileText : FileText;
+          return (
+            <div 
+              key={agent.id} 
+              className="gallery-card hover-lift"
+              style={{ animationDelay: `${idx * 50}ms` }}
+              onClick={() => selectAgent(agent.id)}
+            >
+              <div className="card-visual-header">
+                <div className="icon-wrapper">
+                  <IconComponent size={24} strokeWidth={1.5} />
                 </div>
-                
-                <div className="card-main-info">
-                  <h3>{agent.name}</h3>
-                  <p>{agent.description}</p>
-                </div>
-                
-                <div className="card-footer-action">
-                  <span>Launch Workspace →</span>
+                <div className="card-action-hint">
+                  <ArrowRight size={16} />
                 </div>
               </div>
-            );
-          })}
-        </div>
-
-        {filteredAgents.length === 0 && (
-          <div className="portal-empty-state">
-            <Grid size={32} className="empty-icon" />
-            <h3>No Templates Found</h3>
-            <p>Try adjusting your search query or switching categories.</p>
-          </div>
-        )}
+              <div className="card-content">
+                <h3 className="card-title">{agent.name}</h3>
+              </div>
+            </div>
+          );
+        })}
       </div>
+
+      {filteredAgents.length === 0 && (
+        <div className="gallery-empty animate-fade-in-up">
+          <LayoutGrid size={32} className="empty-icon" />
+          <p>No results found.</p>
+        </div>
+      )}
     </div>
   );
 }

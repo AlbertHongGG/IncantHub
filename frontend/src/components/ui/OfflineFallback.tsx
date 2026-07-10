@@ -1,48 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { WifiOff, RefreshCw } from 'lucide-react';
 import { usePromptStore } from '../../store/usePromptStore';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { Button } from './Button';
 import './OfflineFallback.css';
 
 export function OfflineFallback() {
   const fetchAgents = usePromptStore(state => state.fetchAgents);
-  const [reconnecting, setReconnecting] = useState(false);
-
-  const handleReconnect = async () => {
-    setReconnecting(true);
-    await fetchAgents();
-    setReconnecting(false);
-  };
+  const isLoading = usePromptStore(state => state.isLoading);
 
   return (
-    <div className="offline-fallback-portal animate-fade-in-up">
-      <div className="offline-card">
-        <div className="offline-icon-glow">
-          <AlertCircle size={28} />
+    <div className="offline-portal animate-fade-in">
+      <div className="offline-content">
+        <div className="offline-icon-wrapper">
+          <WifiOff size={32} strokeWidth={1.5} />
         </div>
-        
-        <div className="offline-message">
-          <h2>Unable to Connect to IncantHub Engine</h2>
-          <p>The application cannot establish a link to the backend service running on port 3001.</p>
+        <h2 className="offline-title">Connection Lost</h2>
+        <p className="offline-desc">
+          Unable to reach the core engine. Please ensure the backend server is running on port 3001.
+        </p>
+        <div className="offline-action">
+          <Button 
+            variant="primary" 
+            size="md" 
+            onClick={fetchAgents} 
+            isLoading={isLoading}
+          >
+            {!isLoading && <RefreshCw size={14} />}
+            Reconnect
+          </Button>
         </div>
-
-        <div className="offline-troubleshoot">
-          <h4>How to start the engine:</h4>
-          <div className="code-block-slate">
-            <code>
-              cd backend<br />
-              npm run dev
-            </code>
-          </div>
-        </div>
-
-        <button 
-          className={`reconnect-action-btn ${reconnecting ? 'loading' : ''}`}
-          onClick={handleReconnect}
-          disabled={reconnecting}
-        >
-          <RefreshCw size={13} className={reconnecting ? 'spin' : ''} />
-          <span>{reconnecting ? 'Connecting...' : 'Retry Connection'}</span>
-        </button>
       </div>
     </div>
   );

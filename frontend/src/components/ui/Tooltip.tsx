@@ -2,36 +2,25 @@ import React, { useState } from 'react';
 import './Tooltip.css';
 
 interface TooltipProps {
-  content: string;
+  content: string | React.ReactNode;
   position?: 'top' | 'bottom' | 'left' | 'right';
-  delay?: number;
   children: React.ReactElement;
 }
 
-export function Tooltip({ content, position = 'top', delay = 200, children }: TooltipProps) {
-  const [visible, setVisible] = useState(false);
-  let timeout: NodeJS.Timeout;
-
-  const showTip = () => {
-    timeout = setTimeout(() => {
-      setVisible(true);
-    }, delay);
-  };
-
-  const hideTip = () => {
-    clearTimeout(timeout);
-    setVisible(false);
-  };
+export function Tooltip({ content, position = 'top', children }: TooltipProps) {
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <div 
-      className="tooltip-wrapper" 
-      onMouseEnter={showTip} 
-      onMouseLeave={hideTip}
+      className="ui-tooltip-container"
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+      onFocus={() => setIsVisible(true)}
+      onBlur={() => setIsVisible(false)}
     >
       {children}
-      {visible && (
-        <div className={`tooltip-tip ${position}`}>
+      {isVisible && (
+        <div className={`ui-tooltip-content pos-${position} animate-fade-in`}>
           {content}
         </div>
       )}

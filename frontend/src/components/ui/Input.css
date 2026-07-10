@@ -1,0 +1,149 @@
+.ui-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ui-input-container.full-width {
+  width: 100%;
+}
+
+.ui-input-label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+}
+
+.ui-input-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.ui-input, .ui-textarea {
+  width: 100%;
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.ui-input::placeholder, .ui-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ui-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.ui-input:hover, .ui-textarea:hover {
+  border-color: var(--color-border-hover);
+}
+
+.ui-input:focus, .ui-textarea:focus {
+  border-color: transparent; /* hidden to let focus line show */
+  background-color: var(--color-bg-base);
+}
+
+/* Elegant Focus Line for Standard Inputs */
+.ui-input-focus-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-accent-primary);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.98);
+  transition: all var(--transition-fast);
+  z-index: 1;
+}
+
+.ui-input:focus + .ui-input-focus-line {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 0 0 2px var(--color-accent-ghost);
+}
+
+/* Error State */
+.ui-input-container.has-error .ui-input {
+  border-color: var(--color-error);
+}
+
+.ui-input-container.has-error .ui-input:focus + .ui-input-focus-line {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 2px var(--color-error-bg);
+}
+
+.ui-input-helper {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.ui-input-helper.is-error {
+  color: var(--color-error);
+}
+
+/* -------------------------------------
+ * Rich Composer (Textarea Revamp)
+ * ------------------------------------- */
+
+.ui-composer-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ui-composer-container.full-width {
+  width: 100%;
+}
+
+.ui-composer-wrapper {
+  position: relative;
+  display: flex;
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl); /* Much rounder for chat feel */
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-2);
+  align-items: flex-end;
+}
+
+.ui-composer-wrapper:focus-within {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.ui-composer-input {
+  flex-grow: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  resize: none;
+  max-height: 200px;
+  min-height: 40px; /* Minimum one line height essentially */
+  line-height: 1.5;
+  outline: none;
+}
+
+.ui-composer-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ui-composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  margin-left: var(--space-2);
+}

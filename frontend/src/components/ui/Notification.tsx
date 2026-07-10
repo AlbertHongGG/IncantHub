@@ -1,57 +1,56 @@
-import React, { useEffect } from 'react';
-import { useNotificationStore } from '../../store/useNotificationStore';
-import type { NotificationItem } from '../../store/useNotificationStore';
-import { CheckCircle, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNotificationStore, type NotificationItem } from '../../store/useNotificationStore';
+import { X, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 import './Notification.css';
 
-const IconMap = {
-  success: CheckCircle,
+const iconMap = {
+  success: CheckCircle2,
   error: AlertCircle,
-  warning: AlertTriangle,
+  warning: AlertCircle,
   info: Info
 };
 
-export function NotificationContainer() {
-  const notifications = useNotificationStore(state => state.notifications);
+function Toast({ item, onRemove }: { item: NotificationItem, onRemove: (id: string) => void }) {
+  const [isLeaving, setIsLeaving] = useState(false);
+  
+  useEffect(() => {
+    if (item.duration) {
+      const timer = setTimeout(() => {
+        handleRemove();
+      }, item.duration);
+      return () => clearTimeout(timer);
+    }
+  }, [item]);
+
+  const handleRemove = () => {
+    setIsLeaving(true);
+    setTimeout(() => onRemove(item.id), 300); // Wait for exit animation
+  };
+
+  const Icon = iconMap[item.type] || Info;
 
   return (
-    <div className="notification-container">
-      {notifications.map(notification => (
-        <NotificationToast key={notification.id} notification={notification} />
-      ))}
+    <div className={`ui-toast type-${item.type} ${isLeaving ? 'toast-leave' : 'toast-enter'}`}>
+      <Icon size={16} className="toast-icon" />
+      <span className="toast-message">{item.message}</span>
+      <button className="toast-close" onClick={handleRemove}>
+        <X size={14} />
+      </button>
     </div>
   );
 }
 
-function NotificationToast({ notification }: { notification: NotificationItem }) {
+export function NotificationContainer() {
+  const notifications = useNotificationStore(state => state.notifications);
   const removeNotification = useNotificationStore(state => state.removeNotification);
-  const { id, type, message, duration = 3000 } = notification;
-  const IconComponent = IconMap[type];
 
-  // Auto-dismiss handler
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      removeNotification(id);
-    }, duration);
-
-    return () => clearTimeout(timer);
-  }, [id, duration, removeNotification]);
+  if (notifications.length === 0) return null;
 
   return (
-    <div className={`notification-toast ${type}`}>
-      <div className="toast-icon-wrapper">
-        <IconComponent size={16} />
-      </div>
-      <div className="toast-message">
-        {message}
-      </div>
-      <button 
-        type="button" 
-        className="toast-close-btn" 
-        onClick={() => removeNotification(id)}
-      >
-        <X size={14} />
-      </button>
+    <div className="ui-toast-container">
+      {notifications.map(n => (
+        <Toast key={n.id} item={n} onRemove={removeNotification} />
+      ))}
     </div>
   );
 }

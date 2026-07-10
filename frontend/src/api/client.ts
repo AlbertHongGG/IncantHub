@@ -25,25 +25,55 @@ export interface AgentExecutionResult {
   metadata?: Record<string, any>;
 }
 
-export const API_URL = 'http://localhost:3001/api';
+export class APIError extends Error {
+  constructor(public statusCode: number, message: string) {
+    super(message);
+    this.name = 'APIError';
+  }
+}
 
-export const apiClient = {
-  getAgents: async (): Promise<AgentMetadata[]> => {
-    const res = await fetch(`${API_URL}/prompts`);
-    if (!res.ok) throw new Error('Failed to fetch agents');
-    return res.json();
-  },
-  executeAgent: async (id: string, payload: Record<string, any>): Promise<AgentExecutionResult> => {
-    const res = await fetch(`${API_URL}/prompts/${id}/execute`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+class IncantHubAPIClient {
+  private readonly baseUrl: string;
+
+  constructor(baseUrl: string = 'http://localhost:3001/api') {
+    this.baseUrl = baseUrl;
+  }
+
+  private async fetchJSON<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Execution failed');
+
+    if (!response.ok) {
+      let errorMessage = 'An unknown error occurred';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        errorMessage = response.statusText;
+      }
+      throw new APIError(response.status, errorMessage);
     }
-    const data = await res.json();
+
+    return response.json();
+  }
+
+  public async getAgents(): Promise<AgentMetadata[]> {
+    return this.fetchJSON<AgentMetadata[]>('/prompts');
+  }
+
+  public async executeAgent(id: string, payload: Record<string, any>): Promise<AgentExecutionResult> {
+    const data = await this.fetchJSON<{ result: AgentExecutionResult }>(`/prompts/${id}/execute`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
     return data.result;
   }
-};
+}
+
+// Singleton instance
+export const apiClient = new IncantHubAPIClient();

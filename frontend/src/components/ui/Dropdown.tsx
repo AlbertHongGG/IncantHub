@@ -1,97 +1,87 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Dropdown.css';
 
-// Context to share dropdown state
-const DropdownContext = createContext<{
+interface DropdownContextType {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-} | null>(null);
-
-function useDropdown() {
-  const context = useContext(DropdownContext);
-  if (!context) {
-    throw new Error('Dropdown compound components must be rendered within a <Dropdown />');
-  }
-  return context;
+  setIsOpen: (v: boolean) => void;
 }
+
+const DropdownContext = React.createContext<DropdownContextType>({ isOpen: false, setIsOpen: () => {} });
 
 export function Dropdown({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Click Outside detection hook logic
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
     <DropdownContext.Provider value={{ isOpen, setIsOpen }}>
-      <div className="dropdown" ref={dropdownRef}>
+      <div className="ui-dropdown" ref={containerRef}>
         {children}
       </div>
     </DropdownContext.Provider>
   );
 }
 
-// Trigger Component
-Dropdown.Trigger = function DropdownTrigger({ children }: { children: React.ReactElement }) {
-  const { isOpen, setIsOpen } = useDropdown();
-
-  return React.cloneElement(children, {
-    onClick: (e: React.MouseEvent) => {
-      // Execute original click handler if it exists
-      if (children.props.onClick) children.props.onClick(e);
-      setIsOpen(!isOpen);
-    },
-    className: `${children.props.className || ''} dropdown-trigger-btn ${isOpen ? 'active' : ''}`.trim()
-  });
-};
-
-// Menu Component
-Dropdown.Menu = function DropdownMenu({ children, align = 'left' }: { children: React.ReactNode; align?: 'left' | 'right' }) {
-  const { isOpen } = useDropdown();
-
-  if (!isOpen) return null;
+function DropdownTrigger({ children, asChild = false }: { children: React.ReactNode, asChild?: boolean }) {
+  const { isOpen, setIsOpen } = React.useContext(DropdownContext);
+  
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children as React.ReactElement, {
+      onClick: (e: any) => {
+        setIsOpen(!isOpen);
+        if (children.props.onClick) children.props.onClick(e);
+      }
+    });
+  }
 
   return (
-    <div className={`dropdown-menu ${align}`}>
+    <div className="ui-dropdown-trigger" onClick={() => setIsOpen(!isOpen)}>
       {children}
     </div>
   );
-};
+}
 
-// Item Component
-Dropdown.Item = function DropdownItem({ 
-  children, 
-  onClick,
-  variant = 'default'
-}: { 
-  children: React.ReactNode; 
-  onClick?: () => void;
-  variant?: 'default' | 'danger';
-}) {
-  const { setIsOpen } = useDropdown();
-
-  const handleItemClick = () => {
-    if (onClick) onClick();
-    setIsOpen(false);
-  };
+function DropdownMenu({ children, align = 'left' }: { children: React.ReactNode, align?: 'left' | 'right' }) {
+  const { isOpen } = React.useContext(DropdownContext);
+  if (!isOpen) return null;
 
   return (
+    <div className={`ui-dropdown-menu align-${align} animate-fade-in-down`}>
+      {children}
+    </div>
+  );
+}
+
+function DropdownItem({ children, onClick, icon }: { children: React.ReactNode, onClick?: () => void, icon?: React.ReactNode }) {
+  const { setIsOpen } = React.useContext(DropdownContext);
+  return (
     <button 
-      type="button" 
-      className={`dropdown-item ${variant}`}
-      onClick={handleItemClick}
+      className="ui-dropdown-item" 
+      onClick={() => {
+        if (onClick) onClick();
+        setIsOpen(false);
+      }}
     >
+      {icon && <span className="ui-dropdown-icon">{icon}</span>}
       {children}
     </button>
   );
-};
+}
+
+function DropdownDivider() {
+  return <div className="ui-dropdown-divider" />;
+}
+
+Dropdown.Trigger = DropdownTrigger;
+Dropdown.Menu = DropdownMenu;
+Dropdown.Item = DropdownItem;
+Dropdown.Divider = DropdownDivider;
