@@ -196,114 +196,245 @@
   opacity: 1;
 }
 
-/* Right Panel */
-.panel-canvas {
+/* Right Panel: Chat Stream */
+.panel-chat-stream {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg-base);
+  background-color: var(--color-bg-subtle);
   overflow: hidden;
 }
 
-.canvas-header {
-  height: 48px;
+.chat-header {
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-6);
-  border-bottom: 1px solid var(--color-border-subtle);
   background-color: var(--color-bg-base);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
-.canvas-tab {
+.chat-tab {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-primary);
-  height: 100%;
-  border-bottom: 2px solid var(--color-accent-primary);
 }
 
-.canvas-body {
+.sparkles-icon {
+  color: var(--color-accent-primary);
+}
+
+.chat-body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-8);
-  display: flex;
-  flex-direction: column;
-}
-
-.canvas-placeholder {
-  margin: auto;
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
-/* Skeleton Loaders */
-.canvas-loading {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.skeleton-block {
-  background-color: var(--color-border-subtle);
-  border-radius: var(--radius-sm);
-}
-
-.header-skeleton {
-  height: 32px;
-  width: 40%;
-  margin-bottom: var(--space-4);
-}
-
-.text-skeleton {
-  height: 16px;
-  width: 100%;
-}
-
-.w-80 { width: 80%; }
-.w-60 { width: 60%; }
-
-/* Output Result */
-.canvas-result {
-  max-width: 800px;
-  width: 100%;
-  margin: 0 auto;
+  padding: var(--space-6) var(--space-8);
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  background: var(--color-bg-subtle);
-  padding: var(--space-8);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border-default);
+  scroll-behavior: smooth;
 }
 
-.result-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.chat-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  color: var(--color-text-muted);
   gap: var(--space-4);
+  text-align: center;
 }
 
-.result-image-box {
+.empty-state-icon {
+  color: var(--color-accent-primary);
+  opacity: 0.5;
+}
+
+.chat-empty-state h3 {
+  color: var(--color-text-primary);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+}
+
+/* Chat Messages */
+.chat-message-row {
+  display: flex;
+  gap: var(--space-4);
+  max-width: 85%;
+  animation: fade-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.chat-message-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-message-row.assistant {
+  align-self: flex-start;
+}
+
+.chat-message-row.system {
+  align-self: center;
+  max-width: 100%;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.message-avatar.assistant {
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-default);
+  color: var(--color-accent-primary);
+}
+
+.message-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.chat-message-row.user .message-content-wrapper {
+  align-items: flex-end;
+}
+
+.message-bubble {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xl);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-message-row.user .message-bubble {
+  background-color: var(--color-accent-muted);
+  color: var(--color-text-primary);
+  border-bottom-right-radius: var(--space-1);
+}
+
+.chat-message-row.assistant .message-bubble {
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-default);
+  border-bottom-left-radius: var(--space-1);
+}
+
+.message-error-bubble {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.message-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.message-text strong {
+  font-weight: var(--weight-semibold);
+}
+
+.message-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.message-image-box {
+  width: 240px;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--color-border-default);
 }
 
-.result-image-box img {
+.message-image-box img {
   width: 100%;
   display: block;
 }
 
-.result-text {
-  font-size: var(--text-sm);
-  line-height: 1.6;
+.message-actions {
+  display: flex;
+  gap: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.chat-message-row:hover .message-actions {
+  opacity: 1;
+}
+
+.msg-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.msg-action-btn:hover {
+  background-color: var(--color-bg-base);
   color: var(--color-text-primary);
-  white-space: pre-wrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+/* Generating Indicator */
+.generating-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 var(--space-1);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-primary);
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

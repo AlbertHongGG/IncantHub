@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePromptStore } from '../store/usePromptStore';
 import { useNotificationStore } from '../store/useNotificationStore';
 import { Tooltip } from './ui/Tooltip';
 import { Button } from './ui/Button';
-import { Input, Textarea } from './ui/Input';
-import { Play, UploadCloud, X, Copy, ChevronLeft, LayoutPanelLeft, Send, Loader2 } from 'lucide-react';
+import { Textarea } from './ui/Input';
+import { Play, UploadCloud, X, Copy, ChevronLeft, LayoutPanelLeft, Send, Loader2, Sparkles, CheckCheck } from 'lucide-react';
 import './PromptExecution.css';
 
 export function PromptExecution() {
@@ -13,31 +13,34 @@ export function PromptExecution() {
     selectedAgentId, 
     selectAgent, 
     executeAgent, 
-    isExecuting, 
-    executionResult, 
-    error,
+    sessions,
+    updateSessionPayload,
     isServerOffline
   } = usePromptStore();
 
   const addNotification = useNotificationStore(state => state.addNotification);
   
-  const [payload, setPayload] = useState<Record<string, any>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const [copiedId, setCopiedId] = React.useState<string | null>(null);
 
   const selectedAgent = agents.find(p => p.id === selectedAgentId);
+  const currentSession = selectedAgentId ? sessions[selectedAgentId] : null;
 
   useEffect(() => {
-    setPayload({});
-  }, [selectedAgentId]);
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [currentSession?.messages]);
 
-  useEffect(() => {
-    if (error) addNotification(error, 'error');
-  }, [error, addNotification]);
+  if (!selectedAgent || !currentSession) return null;
 
-  if (!selectedAgent) return null;
+  const payload = currentSession.payload;
+  const isExecuting = currentSession.isExecuting;
+  const error = currentSession.error;
 
   const handleInputChange = (fieldName: string, value: any) => {
-    setPayload(prev => ({ ...prev, [fieldName]: value }));
+    updateSessionPayload(selectedAgent.id, { ...payload, [fieldName]: value });
   };
 
   const handleFileChange = (fieldName: string, files: FileList | null, maxCount = 1) => {
@@ -72,12 +75,21 @@ export function PromptExecution() {
       return;
     }
     executeAgent(payload);
+    // Clear text inputs after sending to prepare for next interaction
+    const newPayload = { ...payload };
+    Object.entries(selectedAgent.inputSchema).forEach(([key, schema]: [string, any]) => {
+      if (schema.type === 'text') {
+        newPayload[key] = '';
+      }
+    });
+    updateSessionPayload(selectedAgent.id, newPayload);
   };
 
-  const handleCopy = () => {
-    if (executionResult?.content) {
-      navigator.clipboard.writeText(executionResult.content);
-      addNotification('Output copied to clipboard.', 'success');
+  const handleCopy = (content: string, id: string) => {
+    if (content) {
+      navigator.clipboard.writeText(content);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
     }
   };
 
@@ -160,7 +172,6 @@ export function PromptExecution() {
               </div>
             )}
           </div>
-          {/* If the last field is an image field, we put the send button below it */}
           {isLast && (
              <div className="standalone-send-actions">
                {sendButton}
@@ -194,54 +205,86 @@ export function PromptExecution() {
           </div>
         </aside>
 
-        {/* Right Panel: Canvas Output */}
-        <section className="panel-canvas">
-          <div className="canvas-header">
-            <div className="canvas-tab active">
-              <LayoutPanelLeft size={14} />
-              Output Console
+        {/* Right Panel: Chat Stream */}
+        <section className="panel-chat-stream">
+          <div className="chat-header">
+            <div className="chat-tab active">
+              <Sparkles size={14} className="sparkles-icon" />
+              Dialogue & Report
             </div>
-            {executionResult && (
-              <Button variant="ghost" size="sm" onClick={handleCopy}>
-                <Copy size={14} />
-                Copy
-              </Button>
-            )}
           </div>
           
-          <div className="canvas-body">
-            {!isExecuting && !executionResult && !error && (
-              <div className="canvas-placeholder">
-                Configuration pending execution.
+          <div className="chat-body" ref={chatScrollRef}>
+            {currentSession.messages.length === 0 && !error && (
+              <div className="chat-empty-state">
+                <div className="empty-state-icon">
+                  <Sparkles size={32} />
+                </div>
+                <h3>Start a conversation with {selectedAgent.name}</h3>
+                <p>Configure the fields on the left and hit send to begin.</p>
               </div>
             )}
 
-            {isExecuting && (
-              <div className="canvas-loading">
-                <div className="skeleton-block header-skeleton animate-pulse" />
-                <div className="skeleton-block text-skeleton animate-pulse" />
-                <div className="skeleton-block text-skeleton animate-pulse w-80" />
-                <div className="skeleton-block text-skeleton animate-pulse w-60" />
-              </div>
-            )}
-
-            {!isExecuting && executionResult && (
-              <div className="canvas-result animate-fade-in-up">
-                {(executionResult.type === 'image' || executionResult.type === 'mixed') && executionResult.images && executionResult.images.length > 0 && (
-                  <div className="result-gallery">
-                    {executionResult.images.map((imgUrl, idx) => (
-                      <div key={idx} className="result-image-box">
-                        <img src={imgUrl} alt={`Generated output ${idx + 1}`} />
-                      </div>
-                    ))}
+            {currentSession.messages.map((msg) => (
+              <div key={msg.id} className={`chat-message-row ${msg.role}`}>
+                {msg.role === 'assistant' && (
+                  <div className="message-avatar assistant">
+                    <Sparkles size={16} />
                   </div>
                 )}
                 
-                {executionResult.content && (
-                  <div className="result-text">
-                    {executionResult.content}
+                <div className="message-content-wrapper">
+                  <div className="message-bubble">
+                    {msg.isGenerating && (
+                      <div className="generating-indicator">
+                        <div className="dot" />
+                        <div className="dot" />
+                        <div className="dot" />
+                      </div>
+                    )}
+                    
+                    {msg.images && msg.images.length > 0 && (
+                      <div className="message-gallery">
+                        {msg.images.map((imgUrl, idx) => (
+                          <div key={idx} className="message-image-box">
+                            <img src={imgUrl} alt={`Attached ${idx + 1}`} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {msg.content && (
+                      <div className="message-text">
+                        {msg.content.split('\n').map((line, i) => (
+                          <React.Fragment key={i}>
+                            {line}
+                            <br />
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                  
+                  {msg.role === 'assistant' && !msg.isGenerating && msg.content && (
+                    <div className="message-actions">
+                      <button 
+                        className="msg-action-btn"
+                        onClick={() => handleCopy(msg.content!, msg.id)}
+                        title="Copy to clipboard"
+                      >
+                        {copiedId === msg.id ? <CheckCheck size={14} className="text-success" /> : <Copy size={14} />}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            
+            {error && (
+              <div className="chat-message-row system">
+                <div className="message-error-bubble">
+                  {error}
+                </div>
               </div>
             )}
           </div>
