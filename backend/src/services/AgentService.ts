@@ -1,9 +1,15 @@
 import { BaseBackendAgent } from '../agents/BaseBackendAgent';
 import type { AgentMetadata } from '../types/agent';
 import { getAllAgents } from '../agents';
+import { TagService } from './TagService';
 
 export class AgentService {
   private registry: Map<string, BaseBackendAgent> = new Map();
+  private tagService: TagService;
+
+  constructor(tagService: TagService) {
+    this.tagService = tagService;
+  }
 
   async init() {
     console.log('[AgentService] Initializing clean OOP Agent Registry...');
@@ -31,6 +37,12 @@ export class AgentService {
   }
 
   getAllMetadata(): AgentMetadata[] {
-    return Array.from(this.registry.values()).map(agent => agent.getMetadata());
+    return Array.from(this.registry.values()).map(agent => {
+      const meta = agent.getMetadata();
+      return {
+        ...meta,
+        tags: this.tagService.getTags(meta.id)
+      };
+    });
   }
 }

@@ -16,6 +16,7 @@ export interface AgentMetadata {
   description: string;
   icon?: string;
   inputSchema: InputSchema;
+  tags?: string[];
 }
 
 export interface AgentExecutionResult {
@@ -72,6 +73,21 @@ class IncantHubAPIClient {
       body: JSON.stringify(payload),
     });
     return data.result;
+  }
+
+  public async addTag(agentId: string, tag: string): Promise<string[]> {
+    const data = await this.fetchJSON<{ tags: string[] }>(`/prompts/${agentId}/tags`, {
+      method: 'POST',
+      body: JSON.stringify({ tag }),
+    });
+    return data.tags;
+  }
+
+  public async removeTag(agentId: string, tag: string): Promise<string[]> {
+    const data = await this.fetchJSON<{ tags: string[] }>(`/prompts/${agentId}/tags/${encodeURIComponent(tag)}`, {
+      method: 'DELETE',
+    });
+    return data.tags;
   }
 }
 

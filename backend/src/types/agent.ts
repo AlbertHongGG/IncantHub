@@ -16,6 +16,7 @@ export interface AgentMetadata {
   description: string;
   icon?: string;
   inputSchema: InputSchema;
+  tags?: string[];
 }
 
 export interface AgentExecutionResult {

@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import { usePromptStore } from '../store/usePromptStore';
-import { FileText, Image as ImageIcon, PenTool, Search, LayoutGrid, ArrowRight } from 'lucide-react';
+import { FileText, Image as ImageIcon, PenTool, Search, LayoutGrid, ArrowRight, Tags } from 'lucide-react';
 import { Input } from './ui/Input';
+import { TagInput } from './ui/TagInput';
 import './PromptList.css';
 
 const IconMap: Record<string, React.ElementType> = {
@@ -13,7 +14,13 @@ const IconMap: Record<string, React.ElementType> = {
 export function PromptList() {
   const { 
     agents, 
-    activeCategory, 
+    selectedTags,
+    selectedCategories,
+    availableTags,
+    toggleTagFilter,
+    toggleCategoryFilter,
+    addTagToAgent,
+    removeTagFromAgent,
     selectAgent, 
     fetchAgents, 
     isLoading, 
@@ -27,11 +34,14 @@ export function PromptList() {
 
   const filteredAgents = useMemo(() => {
     return agents.filter(agent => {
-      const matchesCategory = agent.category === activeCategory;
       const matchesSearch = agent.name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const matchesTags = selectedTags.length === 0 || 
+        selectedTags.every(tag => agent.tags?.includes(tag));
+      const matchesCategory = selectedCategories.length === 0 ||
+        selectedCategories.includes(agent.category);
+      return matchesSearch && matchesTags && matchesCategory;
     });
-  }, [agents, activeCategory, searchQuery]);
+  }, [agents, searchQuery, selectedTags, selectedCategories]);
 
   if (isLoading) {
     return (
@@ -64,6 +74,43 @@ export function PromptList() {
         </div>
       </div>
 
+      <div className="global-tag-filters">
+        {/* Category Filters */}
+        <div className="filter-group">
+          {['text', 'image'].map(cat => {
+            const isSelected = selectedCategories.includes(cat);
+            return (
+              <button 
+                key={cat}
+                className={`tag-pill category-pill ${isSelected ? 'selected' : ''}`}
+                onClick={() => toggleCategoryFilter(cat)}
+              >
+                {cat === 'text' ? <FileText size={12} className="pill-icon" /> : <ImageIcon size={12} className="pill-icon" />}
+                <span style={{ textTransform: 'capitalize' }}>{cat}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Dynamic Tag Filters */}
+        {availableTags.length > 0 && (
+          <div className="filter-group tag-filters-divider">
+            {availableTags.map(tag => {
+              const isSelected = selectedTags.includes(tag);
+              return (
+                <button 
+                  key={tag}
+                  className={`tag-pill ${isSelected ? 'selected' : ''}`}
+                  onClick={() => toggleTagFilter(tag)}
+                >
+                  {tag}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       <div className="gallery-grid">
         {filteredAgents.map((agent, idx) => {
           const IconComponent = agent.icon ? IconMap[agent.icon] || FileText : FileText;
@@ -84,6 +131,15 @@ export function PromptList() {
               </div>
               <div className="card-content">
                 <h3 className="card-title">{agent.name}</h3>
+              </div>
+              <div className="card-tags-area" onClick={e => e.stopPropagation()}>
+                <TagInput 
+                  tags={agent.tags || []} 
+                  availableTags={availableTags}
+                  onAddTag={(tag) => addTagToAgent(agent.id, tag)}
+                  onRemoveTag={(tag) => removeTagFromAgent(agent.id, tag)}
+                  placeholder="Add a tag..."
+                />
               </div>
             </div>
           );

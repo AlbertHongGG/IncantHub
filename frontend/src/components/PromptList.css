@@ -55,6 +55,60 @@
   border-radius: var(--radius-full);
 }
 
+.global-tag-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tag-filters-divider {
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--color-border-subtle);
+}
+
+.category-pill {
+  padding-left: var(--space-2);
+  border-color: var(--color-border-subtle);
+}
+
+.pill-icon {
+  margin-right: var(--space-1);
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tag-pill:hover {
+  border-color: var(--color-accent-primary);
+  color: var(--color-accent-primary);
+}
+
+.tag-pill.selected {
+  background-color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+  color: var(--color-accent-text);
+}
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -72,7 +126,6 @@
   flex-direction: column;
   gap: var(--space-6);
   position: relative;
-  overflow: hidden;
   animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
@@ -123,6 +176,12 @@
   font-weight: var(--weight-medium);
   color: var(--color-text-primary);
   letter-spacing: -0.01em;
+}
+
+.card-tags-area {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--color-border-subtle);
 }
 
 /* Skeleton Loading */
