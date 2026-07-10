@@ -77,8 +77,8 @@ export function PromptExecution() {
   };
 
   const handleCopy = () => {
-    if (executionResult) {
-      navigator.clipboard.writeText(executionResult);
+    if (executionResult && executionResult.content) {
+      navigator.clipboard.writeText(executionResult.content);
       addNotification('Copied output to clipboard!', 'success');
     }
   };
@@ -234,8 +234,22 @@ export function PromptExecution() {
             )}
             
             {!error && executionResult && (
-              <div className="canvas-success-markdown">
-                {executionResult}
+              <div className="canvas-success-multimodal">
+                {(executionResult.type === 'image' || executionResult.type === 'mixed') && executionResult.images && executionResult.images.length > 0 && (
+                  <div className="output-image-gallery">
+                    {executionResult.images.map((imgUrl, idx) => (
+                      <div key={idx} className="output-image-wrapper">
+                        <img src={imgUrl} alt={`Generated output ${idx + 1}`} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {executionResult.content && (
+                  <div className="canvas-success-markdown">
+                    {executionResult.content}
+                  </div>
+                )}
               </div>
             )}
             

@@ -286,6 +286,43 @@
   align-items: center;
 }
 
+/* Multimodal UI: Image Gallery Styles */
+.canvas-success-multimodal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.output-image-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.output-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background-color: var(--background-secondary);
+}
+
+.output-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.output-image-wrapper img:hover {
+  transform: scale(1.02);
+}
+
+
 .output-pane-header h3 {
   font-size: 14px;
   font-weight: 600;

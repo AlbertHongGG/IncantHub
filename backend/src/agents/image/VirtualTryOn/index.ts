@@ -1,5 +1,6 @@
 import { BaseAgent } from '../../BaseAgent';
 import type { AgentMetadata } from '../../../models/AgentMetadata';
+import type { AgentExecutionResult } from '../../../models/AgentExecutionResult';
 import { AIProvider } from '../../../../../../_Framework/MultiAgent/src/providers/AIProvider';
 import { buildVirtualTryOnPayload } from './prompt';
 
@@ -43,7 +44,7 @@ export class VirtualTryOnAgent extends BaseAgent {
     };
   }
 
-  protected async process(inputs: Record<string, any>, options?: any): Promise<any> {
+  protected async process(inputs: Record<string, any>, options?: any): Promise<AgentExecutionResult> {
     const sourceImage = inputs['source_image'];
     const clothingImages = inputs['clothing_images'];
     const poseImage = inputs['pose_image'];
@@ -59,6 +60,12 @@ export class VirtualTryOnAgent extends BaseAgent {
       sessionId: options?.sessionId
     });
 
-    return response.text;
+    const generatedImages = response.metadata?.images || [];
+
+    return {
+      type: generatedImages.length > 0 ? 'image' : 'text',
+      content: response.text,
+      images: generatedImages
+    };
   }
 }

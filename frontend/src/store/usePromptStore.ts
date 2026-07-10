@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { apiClient } from '../api/client';
-import type { AgentMetadata } from '../api/client';
+import type { AgentMetadata, AgentExecutionResult } from '../api/client';
 
 interface PromptState {
   agents: AgentMetadata[];
@@ -8,7 +8,7 @@ interface PromptState {
   selectedAgentId: string | null;
   isLoading: boolean;
   isExecuting: boolean;
-  executionResult: string | null;
+  executionResult: AgentExecutionResult | null;
   error: string | null;
   searchQuery: string;
   isServerOffline: boolean;

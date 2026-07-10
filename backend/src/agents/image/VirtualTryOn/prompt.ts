@@ -41,10 +41,11 @@ You MUST process the input image array strictly according to these indices:
 ${poseIndex !== -1 ? `- Image [${poseIndex}]: **The Target Pose** (The exact posture the character must assume).` : '- **The Target Pose**: None provided. You must keep the character in their original pose.'}
 
 # CONSTRAINTS
-- The character's face, identity, and body type MUST remain identical to Image [${sourceIndex}].
-- The clothing items MUST accurately reflect the colors, textures, and styles of the reference garments.
-- Ensure natural lighting, seamless blending, and realistic fabric physics (draping, shadows).
-- Do not add any extra accessories or background elements unless specifically requested.
+1. **BACKGROUND PRESERVATION**: The background MUST remain exactly the same as the Source Character image (Image [${sourceIndex}]). Do not change the environment, lighting context, or add a studio backdrop.
+2. **IDENTITY PRESERVATION**: The character's face, hair style, hair color, skin tone, and body proportions MUST remain 100% identical to the Source Character (Image [${sourceIndex}]). Do NOT blend facial features or hair with the pose reference.
+3. **CLOTHING REPLACEMENT**: Replace the character's original clothing with the reference garments. The new clothing MUST accurately reflect the colors, textures, patterns, and styles of the reference images.
+4. **POSE ADAPTATION**: ${poseIndex !== -1 ? `The character MUST strike the exact posture shown in the Target Pose (Image [${poseIndex}]). However, the background and identity must still strictly follow the Source Character.` : `Since no pose image was provided, you MUST keep the character in their exact original pose from the Source Character (Image [${sourceIndex}]).`}
+5. **REALISM**: Ensure seamless blending, natural shadows, and realistic fabric physics (draping, wrinkles) based on the pose.
 `.trim();
 
   return { systemPrompt, allImages };

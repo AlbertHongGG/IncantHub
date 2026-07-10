@@ -1,5 +1,6 @@
 import { BaseAgent } from '../../BaseAgent';
 import type { AgentMetadata } from '../../../models/AgentMetadata';
+import type { AgentExecutionResult } from '../../../models/AgentExecutionResult';
 import { AIProvider } from '../../../../../../_Framework/MultiAgent/src/providers/AIProvider';
 import { buildSystemPrompt, buildUserPrompt } from './prompt';
 
@@ -13,30 +14,30 @@ export class PoliteCommunicatorAgent extends BaseAgent {
       id: 'polite-communicator',
       name: 'Polite Communicator',
       category: 'text',
-      description: 'Rewrites rough expressions into formal, polite, and clear communication.',
-      icon: 'pen-tool',
+      description: 'Transforms casual or blunt text into a polite, professional message suitable for work.',
+      icon: 'message-square',
       inputSchema: {
-        raw_text: {
+        raw_message: {
           type: 'text',
-          label: 'Raw Text',
+          label: 'Raw Message',
           required: true
         },
-        target_audience: {
+        tone: {
           type: 'text',
-          label: 'Target Audience',
+          label: 'Desired Tone',
           required: false
         }
       }
     };
   }
 
-  protected async process(inputs: Record<string, any>, options?: any): Promise<any> {
-    const rawText = inputs['raw_text'];
-    const audience = inputs['target_audience'] || 'general professional audience';
+  protected async process(inputs: Record<string, any>, options?: any): Promise<AgentExecutionResult> {
+    const rawMessage = inputs['raw_message'];
+    const tone = inputs['tone'] || 'professional and polite';
 
-    const systemPrompt = buildSystemPrompt(audience);
-    const userPrompt = buildUserPrompt(rawText);
-    
+    const systemPrompt = buildSystemPrompt(tone);
+    const userPrompt = buildUserPrompt(rawMessage);
+
     const response = await this.provider.generate({
       prompt: userPrompt,
       systemPrompt: systemPrompt,
@@ -44,6 +45,9 @@ export class PoliteCommunicatorAgent extends BaseAgent {
       sessionId: options?.sessionId
     });
 
-    return response.text;
+    return {
+      type: 'text',
+      content: response.text
+    };
   }
 }

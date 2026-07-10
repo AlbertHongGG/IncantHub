@@ -18,6 +18,13 @@ export interface AgentMetadata {
   inputSchema: InputSchema;
 }
 
+export interface AgentExecutionResult {
+  type: 'text' | 'image' | 'mixed';
+  content: string;
+  images?: string[];
+  metadata?: Record<string, any>;
+}
+
 export const API_URL = 'http://localhost:3001/api';
 
 export const apiClient = {
@@ -26,7 +33,7 @@ export const apiClient = {
     if (!res.ok) throw new Error('Failed to fetch agents');
     return res.json();
   },
-  executeAgent: async (id: string, payload: Record<string, any>): Promise<string> => {
+  executeAgent: async (id: string, payload: Record<string, any>): Promise<AgentExecutionResult> => {
     const res = await fetch(`${API_URL}/prompts/${id}/execute`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
