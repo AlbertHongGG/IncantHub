@@ -1,6 +1,6 @@
 import { BaseAgent } from '../../BaseAgent';
 import type { AgentMetadata } from '../../../models/AgentMetadata';
-import { AIProvider } from '../../../../../_Framework/MultiAgent/src/providers/AIProvider';
+import { AIProvider } from '../../../../../../_Framework/MultiAgent/src/providers/AIProvider';
 import { buildVirtualTryOnPayload } from './prompt';
 
 export class VirtualTryOnAgent extends BaseAgent {

@@ -218,8 +218,8 @@ export function PromptExecution() {
             <h3>Execution Output</h3>
             {executionResult && (
               <button className="workspace-copy-action" onClick={handleCopy}>
-                {copied ? <Check size={12} className="copy-success-icon" /> : <Copy size={12} />}
-                <span>{copied ? 'Copied' : 'Copy'}</span>
+                <Copy size={12} />
+                <span>Copy</span>
               </button>
             )}
           </div>

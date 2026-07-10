@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 // 尋找專案根目錄下的 .env 檔案
-const envPath = path.resolve(process.cwd(), '..', '.env');
+const envPath = path.resolve(__dirname, '..', '..', '.env');
 if (!fs.existsSync(envPath)) {
   throw new Error(`CRITICAL ERROR: .env file is missing at ${envPath}. Please copy from .env.example and configure.`);
 }

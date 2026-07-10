@@ -6,7 +6,7 @@ export class IncantLogger {
 
   constructor(private agentName: string) {
     // Project root is IncantHub
-    this.logDir = path.join(process.cwd(), '..', '.runtime', 'logs', agentName);
+    this.logDir = path.resolve(__dirname, '..', '..', '..', '.runtime', 'logs', agentName);
   }
 
   private async ensureLogDir() {
