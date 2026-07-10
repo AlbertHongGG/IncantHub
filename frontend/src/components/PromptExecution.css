@@ -201,7 +201,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg-subtle);
+  background-color: var(--color-bg-base);
   overflow: hidden;
 }
 
@@ -345,8 +345,50 @@
   overflow-wrap: break-word;
 }
 
+.message-text p {
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+}
+
+.message-text p:last-child {
+  margin-bottom: 0;
+}
+
 .message-text strong {
   font-weight: var(--weight-semibold);
+}
+
+.message-text ul, 
+.message-text ol {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-2);
+  padding-left: var(--space-5);
+}
+
+.message-text li {
+  margin-bottom: var(--space-1);
+}
+
+.message-text code {
+  background-color: var(--color-bg-subtle);
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.message-text pre {
+  background-color: var(--color-bg-subtle);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.message-text pre code {
+  background-color: transparent;
+  padding: 0;
 }
 
 .message-gallery {

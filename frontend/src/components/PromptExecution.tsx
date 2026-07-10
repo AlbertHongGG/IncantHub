@@ -5,6 +5,7 @@ import { Tooltip } from './ui/Tooltip';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Input';
 import { Play, UploadCloud, X, Copy, ChevronLeft, LayoutPanelLeft, Send, Loader2, Sparkles, CheckCheck } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import './PromptExecution.css';
 
 export function PromptExecution() {
@@ -255,12 +256,16 @@ export function PromptExecution() {
                     
                     {msg.content && (
                       <div className="message-text">
-                        {msg.content.split('\n').map((line, i) => (
-                          <React.Fragment key={i}>
-                            {line}
-                            <br />
-                          </React.Fragment>
-                        ))}
+                        {msg.role === 'assistant' ? (
+                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        ) : (
+                          msg.content.split('\n').map((line, i) => (
+                            <React.Fragment key={i}>
+                              {line}
+                              <br />
+                            </React.Fragment>
+                          ))
+                        )}
                       </div>
                     )}
                   </div>
