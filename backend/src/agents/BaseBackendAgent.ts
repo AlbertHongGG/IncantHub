@@ -1,9 +1,8 @@
-import { BaseAgent as MultiAgentBase } from '../../../../_Framework/MultiAgent/src/agents/BaseAgent';
+import { BaseAgent } from '../../../../_Framework/MultiAgent/src/agents/BaseAgent';
 import { AIProvider } from '../../../../_Framework/MultiAgent/src/providers/AIProvider';
-import type { AgentMetadata } from '../models/AgentMetadata';
-import type { AgentExecutionResult } from '../models/AgentExecutionResult';
+import type { AgentMetadata, AgentExecutionResult } from '../types/agent';
 
-export abstract class BaseAgent extends MultiAgentBase {
+export abstract class BaseBackendAgent extends BaseAgent {
   constructor(name: string, provider: AIProvider) {
     super(name, provider);
   }

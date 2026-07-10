@@ -1,11 +1,13 @@
-import { loadTextAgents } from './text';
-import { loadImageAgents } from './image';
-import { AIProvider } from '../../../../_Framework/MultiAgent/src/providers/AIProvider';
-import { BaseAgent } from './BaseAgent';
+import { BaseBackendAgent } from './BaseBackendAgent';
+import { ProviderFactory } from '../../../../_Framework/MultiAgent/src/providers/ProviderFactory';
 
-export function loadAllAgents(createProvider: (agentId: string) => AIProvider): BaseAgent[] {
+import { PoliteCommunicatorAgent } from './text/PoliteCommunicator';
+import { VirtualTryOnAgent } from './image/VirtualTryOn';
+
+export function getAllAgents(): BaseBackendAgent[] {
+  // We use the ProviderFactory from the MultiAgent framework directly.
   return [
-    ...loadTextAgents(createProvider),
-    ...loadImageAgents(createProvider)
+    new PoliteCommunicatorAgent(ProviderFactory.createProvider('polite_communicator')),
+    new VirtualTryOnAgent(ProviderFactory.createProvider('virtual_try_on')),
   ];
 }

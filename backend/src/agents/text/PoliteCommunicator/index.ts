@@ -1,10 +1,9 @@
-import { BaseAgent } from '../../BaseAgent';
-import type { AgentMetadata } from '../../../models/AgentMetadata';
-import type { AgentExecutionResult } from '../../../models/AgentExecutionResult';
+import { BaseBackendAgent } from '../../BaseBackendAgent';
+import type { AgentMetadata, AgentExecutionResult } from '../../../types/agent';
 import { AIProvider } from '../../../../../../_Framework/MultiAgent/src/providers/AIProvider';
 import { buildSystemPrompt, buildUserPrompt } from './prompt';
 
-export class PoliteCommunicatorAgent extends BaseAgent {
+export class PoliteCommunicatorAgent extends BaseBackendAgent {
   constructor(provider: AIProvider) {
     super('PoliteCommunicator', provider);
   }

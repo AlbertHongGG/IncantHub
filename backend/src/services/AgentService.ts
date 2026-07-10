@@ -1,32 +1,32 @@
-import { BaseAgent } from '../agents/BaseAgent';
-import type { AgentMetadata } from '../models/AgentMetadata';
-import { loadAllAgents } from '../agents';
-import { ProviderFactory } from '../providers/ProviderFactory';
-import { getAgentConfig } from '../config';
+import { BaseBackendAgent } from '../agents/BaseBackendAgent';
+import type { AgentMetadata } from '../types/agent';
+import { getAllAgents } from '../agents';
 
 export class AgentService {
-  private registry: Map<string, BaseAgent> = new Map();
+  private registry: Map<string, BaseBackendAgent> = new Map();
 
   async init() {
-    console.log('[AgentService] Initializing pure OOP Agent Registry...');
+    console.log('[AgentService] Initializing clean OOP Agent Registry...');
     
-    const agents = loadAllAgents((agentId) => {
-      const { provider, model } = getAgentConfig(agentId);
-      return ProviderFactory.createProvider(provider, model);
-    });
-
-    for (const agent of agents) {
-      this.registerAgent(agent);
+    try {
+      const agents = getAllAgents();
+      for (const agent of agents) {
+        this.registerAgent(agent);
+      }
+      console.log(`[AgentService] Successfully loaded ${this.registry.size} agents.`);
+    } catch (error) {
+      console.error('[AgentService] Failed to initialize agents. Check your environment configurations.', error);
+      throw error;
     }
   }
 
-  registerAgent(agent: BaseAgent) {
+  registerAgent(agent: BaseBackendAgent) {
     const meta = agent.getMetadata();
     this.registry.set(meta.id, agent);
     console.log(`[AgentService] Registered Agent: ${meta.name} (${meta.id})`);
   }
 
-  getAgent(id: string): BaseAgent | undefined {
+  getAgent(id: string): BaseBackendAgent | undefined {
     return this.registry.get(id);
   }
 

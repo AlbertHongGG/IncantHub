@@ -9,7 +9,7 @@ export class AgentController {
   };
 
   executeAgent = async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const inputs = req.body;
     
     const agent = this.service.getAgent(id);
@@ -22,6 +22,7 @@ export class AgentController {
       const result = await agent.execute(inputs);
       res.json({ result });
     } catch (error: any) {
+      console.error(`[AgentController] Error executing agent ${id}:`, error);
       res.status(500).json({ error: error.message });
     }
   };

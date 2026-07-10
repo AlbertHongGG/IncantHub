@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AgentController } from './AgentController';
+import { AgentController } from '../controllers/AgentController';
 import { AgentService } from '../services/AgentService';
 
 export function createAgentRoutes(service: AgentService): Router {
