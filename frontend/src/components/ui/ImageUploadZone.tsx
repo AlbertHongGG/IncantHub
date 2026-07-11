@@ -53,33 +53,43 @@ export function ImageUploadZone({
           onChange={handleFileChange}
         />
 
-        <div className="image-previews-grid">
-          {images.map((imgBase64, idx) => (
-            <div key={idx} className="preview-item">
-              <img src={imgBase64} alt={`Preview ${idx}`} />
-              <button 
-                type="button" 
-                className="preview-remove-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove(idx);
-                }}
+        {hasImages ? (
+          <div className="image-previews-grid">
+            {images.map((imgBase64, idx) => (
+              <div key={idx} className="preview-item">
+                <img src={imgBase64} alt={`Preview ${idx}`} />
+                <button 
+                  type="button" 
+                  className="preview-remove-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(idx);
+                  }}
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+            
+            {canUploadMore && (
+              <div 
+                className={`upload-trigger compact ${isDragging ? 'dragging' : ''}`}
+                onClick={triggerUpload}
+                title="Upload image"
               >
-                <X size={12} />
-              </button>
-            </div>
-          ))}
-          
-          {canUploadMore && (
-            <div 
-              className={`upload-trigger compact ${isDragging ? 'dragging' : ''}`}
-              onClick={triggerUpload}
-              title="Upload image"
-            >
-              <Plus size={20} className="upload-icon" />
-            </div>
-          )}
-        </div>
+                <Plus size={20} className="upload-icon" />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div 
+            className={`upload-trigger ${isDragging ? 'dragging' : ''}`}
+            onClick={triggerUpload}
+          >
+            <UploadCloud size={20} />
+            <span>Click or drag image here</span>
+          </div>
+        )}
       </div>
     </div>
   );
