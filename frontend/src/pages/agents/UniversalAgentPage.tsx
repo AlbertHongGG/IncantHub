@@ -1,16 +1,16 @@
 import React from 'react';
-import { ChevronLeft, Send, Loader2, Sparkles } from 'lucide-react';
+import { ChevronLeft, Loader2, Sparkles } from 'lucide-react';
 import { useAgentStore } from '../../store/useAgentStore';
 import { useChatSessionStore } from '../../store/useChatSessionStore';
 import { useNotificationStore } from '../../store/useNotificationStore';
-import { ImageUploadZone } from '../../components/ui/ImageUploadZone';
-import { Textarea } from '../../components/ui/Input';
+import { DynamicFieldRenderer } from '../../components/widgets/form/DynamicFieldRenderer';
 import { SplitViewLayout } from '../../components/layouts/SplitViewLayout';
 import { ChatWidget } from '../../components/widgets/chat/ChatWidget';
 import { AgentFactory } from '../../domain/agents/AgentFactory';
 import './AgentPage.css';
 
-export function VirtualTryOnPage({ agentId }: { agentId: string }) {
+export function UniversalAgentPage({ agentId }: { agentId: string }) {
+  const agents = useAgentStore(state => state.agents);
   const selectAgent = useAgentStore(state => state.selectAgent);
   const isServerOffline = useAgentStore(state => state.isServerOffline);
   
@@ -19,12 +19,15 @@ export function VirtualTryOnPage({ agentId }: { agentId: string }) {
   const executeAgent = useChatSessionStore(state => state.executeAgent);
   const addNotification = useNotificationStore(state => state.addNotification);
 
+  const selectedAgent = agents.find(a => a.id === agentId);
+  if (!selectedAgent) return null;
+
   const session = sessions[agentId];
   const payload = session?.payload || {};
   const isExecuting = session?.isExecuting || false;
 
-  const updatePayload = (key: string, value: any) => {
-    updateSessionPayload(agentId, { ...payload, [key]: value });
+  const handleInputChange = (fieldName: string, value: any) => {
+    updateSessionPayload(agentId, { ...payload, [fieldName]: value });
   };
 
   const handleExecute = () => {
@@ -33,22 +36,34 @@ export function VirtualTryOnPage({ agentId }: { agentId: string }) {
       return;
     }
     
-    if (!payload.humanImage || payload.humanImage.length === 0) {
-      addNotification("Please upload a person image first.", "error");
-      return;
-    }
-    if (!payload.garmentImage || payload.garmentImage.length === 0) {
-      addNotification("Please upload a garment image first.", "error");
+    // Validate required fields
+    const missingFields = Object.entries(selectedAgent.inputSchema)
+      .filter(([_, schema]) => schema.required)
+      .filter(([key, _]) => {
+        const val = payload[key];
+        return val === undefined || val === null || (typeof val === 'string' && val.trim() === '') || (Array.isArray(val) && val.length === 0);
+      })
+      .map(([_, schema]) => schema.label);
+
+    if (missingFields.length > 0) {
+      addNotification(`Missing required fields: ${missingFields.join(', ')}`, "error");
       return;
     }
 
-    const selectedAgent = useAgentStore.getState().agents.find(a => a.id === agentId);
-    if (!selectedAgent) return;
     const frontendAgent = AgentFactory.createAgent(selectedAgent);
-
     executeAgent(frontendAgent, payload);
-    updateSessionPayload(agentId, { ...payload, prompt: '' });
+    
+    // Clear text inputs after execution
+    const newPayload = { ...payload };
+    Object.entries(selectedAgent.inputSchema).forEach(([key, schema]) => {
+      if (schema.type === 'text') {
+        newPayload[key] = '';
+      }
+    });
+    updateSessionPayload(agentId, newPayload);
   };
+
+  const schemaEntries = Object.entries(selectedAgent.inputSchema);
 
   const leftForm = (
     <div className="agent-page-left-panel">
@@ -56,39 +71,19 @@ export function VirtualTryOnPage({ agentId }: { agentId: string }) {
         <button className="icon-back-btn" onClick={() => selectAgent(null)} title="Back to templates">
           <ChevronLeft size={20} />
         </button>
-        <div className="agent-title">Virtual Try On</div>
+        <div className="agent-title">{selectedAgent.name}</div>
       </div>
 
       <div className="agent-page-form">
-        <div className="form-field-group">
-          <ImageUploadZone 
-            label="Person Image (Required)"
-            maxCount={1}
-            images={payload.humanImage || []}
-            onUpload={(imgs) => updatePayload('humanImage', imgs)}
-            onRemove={() => updatePayload('humanImage', [])}
+        {schemaEntries.map(([fieldName, schema]) => (
+          <DynamicFieldRenderer
+            key={fieldName}
+            fieldName={fieldName}
+            schema={schema}
+            value={payload[fieldName]}
+            onChange={(val) => handleInputChange(fieldName, val)}
           />
-        </div>
-
-        <div className="form-field-group">
-          <ImageUploadZone 
-            label="Garment Image (Required)"
-            maxCount={1}
-            images={payload.garmentImage || []}
-            onUpload={(imgs) => updatePayload('garmentImage', imgs)}
-            onRemove={() => updatePayload('garmentImage', [])}
-          />
-        </div>
-
-        <div className="form-field-group">
-          <Textarea 
-            label="Style Prompt (Optional)"
-            placeholder="E.g., High fashion, street style..."
-            value={payload.prompt || ''}
-            onChange={(e) => updatePayload('prompt', e.target.value)}
-            fullWidth
-          />
-        </div>
+        ))}
       </div>
 
       <div className="agent-page-action-area">
@@ -105,7 +100,7 @@ export function VirtualTryOnPage({ agentId }: { agentId: string }) {
           ) : (
             <>
               <Sparkles size={18} />
-              <span>Run Virtual Try-On</span>
+              <span>Run {selectedAgent.name}</span>
             </>
           )}
         </button>

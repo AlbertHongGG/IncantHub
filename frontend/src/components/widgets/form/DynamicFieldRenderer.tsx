@@ -1,5 +1,5 @@
 import React from 'react';
-import { Textarea } from '../../ui/Input';
+import { Textarea, Input } from '../../ui/Input';
 import { ImageUploadZone } from '../../ui/ImageUploadZone';
 import type { FieldSchema } from '../../../domain/models/Agent';
 
@@ -8,29 +8,39 @@ interface DynamicFieldRendererProps {
   schema: FieldSchema;
   value: any;
   onChange: (value: any) => void;
-  isLastField?: boolean;
-  submitButton?: React.ReactNode;
 }
 
 export function DynamicFieldRenderer({
   fieldName,
   schema,
   value,
-  onChange,
-  isLastField,
-  submitButton
+  onChange
 }: DynamicFieldRendererProps) {
   if (schema.type === 'text') {
+    if (schema.uiType === 'input') {
+      return (
+        <div className="form-field-group">
+          <Input 
+            label={schema.label}
+            placeholder={schema.placeholder || "Enter text..."}
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            required={schema.required}
+            fullWidth
+          />
+        </div>
+      );
+    }
+    
     return (
       <div className="form-field-group">
         <Textarea 
           label={schema.label}
-          placeholder="Type your message here..."
+          placeholder={schema.placeholder || "Type your message here..."}
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           required={schema.required}
           fullWidth
-          rightElement={isLastField ? submitButton : undefined}
         />
       </div>
     );
@@ -41,7 +51,7 @@ export function DynamicFieldRenderer({
     const images: string[] = value || [];
     
     return (
-      <React.Fragment>
+      <div className="form-field-group">
         <ImageUploadZone 
           label={schema.label}
           maxCount={max}
@@ -55,12 +65,7 @@ export function DynamicFieldRenderer({
             onChange(filtered.length > 0 ? filtered : undefined);
           }}
         />
-        {isLastField && submitButton && (
-          <div className="standalone-send-actions" style={{ marginTop: 'var(--space-3)', display: 'flex', justifyContent: 'flex-end' }}>
-            {submitButton}
-          </div>
-        )}
-      </React.Fragment>
+      </div>
     );
   }
 

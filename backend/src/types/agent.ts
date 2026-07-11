@@ -2,6 +2,8 @@ export interface FieldSchema {
   type: 'text' | 'image';
   label: string;
   required: boolean;
+  uiType?: 'input' | 'textarea' | 'image_upload';
+  placeholder?: string;
   maxCount?: number;
 }
 

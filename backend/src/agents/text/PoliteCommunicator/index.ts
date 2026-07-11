@@ -18,12 +18,16 @@ export class PoliteCommunicatorAgent extends BaseBackendAgent {
       inputSchema: {
         raw_message: {
           type: 'text',
-          label: 'Raw Message',
+          uiType: 'textarea',
+          label: 'Original Message',
+          placeholder: 'Type your blunt or informal message here...',
           required: true
         },
-        tone: {
+        audience: {
           type: 'text',
-          label: 'Desired Tone',
+          uiType: 'input',
+          label: 'Target Audience',
+          placeholder: 'E.g., Your boss, a client, the marketing team...',
           required: false
         }
       }
@@ -32,9 +36,9 @@ export class PoliteCommunicatorAgent extends BaseBackendAgent {
 
   protected async process(inputs: Record<string, any>, options?: any): Promise<AgentExecutionResult> {
     const rawMessage = inputs['raw_message'];
-    const tone = inputs['tone'] || 'professional and polite';
+    const audience = inputs['audience'] || 'professional and polite';
 
-    const systemPrompt = buildSystemPrompt(tone);
+    const systemPrompt = buildSystemPrompt(audience);
     const userPrompt = buildUserPrompt(rawMessage);
 
     const response = await this.provider.generate({

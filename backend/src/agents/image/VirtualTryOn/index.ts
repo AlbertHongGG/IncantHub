@@ -18,25 +18,30 @@ export class VirtualTryOnAgent extends BaseBackendAgent {
       inputSchema: {
         source_image: {
           type: 'image',
+          uiType: 'image_upload',
           label: 'Source Character',
           required: true,
           maxCount: 1
         },
         clothing_images: {
           type: 'image',
+          uiType: 'image_upload',
           label: 'Clothing Items',
           required: true,
           maxCount: 3
         },
         pose_image: {
           type: 'image',
+          uiType: 'image_upload',
           label: 'Target Pose',
           required: false,
           maxCount: 1
         },
         prompt: {
           type: 'text',
+          uiType: 'textarea',
           label: 'Additional Style/Prompt',
+          placeholder: 'E.g., High fashion, street style...',
           required: false
         }
       }
