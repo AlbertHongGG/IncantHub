@@ -21,8 +21,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="header-controls">
-          <div className="status-indicator" title={isServerOffline ? 'Server Offline' : 'Server Online'}>
-            <Circle size={10} className={isServerOffline ? 'status-offline' : 'status-online'} fill="currentColor" />
+          <div className={`status-badge ${isServerOffline ? 'offline' : 'online'}`} title={isServerOffline ? 'Server Offline' : 'Server Connected'}>
+            <div className="status-dot"></div>
+            <span className="status-text">{isServerOffline ? 'Offline' : 'Connected'}</span>
           </div>
         </div>
       </header>

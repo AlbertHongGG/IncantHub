@@ -49,25 +49,69 @@
   gap: var(--space-4);
 }
 
-.status-indicator {
+.status-badge {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all var(--transition-normal);
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-subtle);
+  user-select: none;
 }
 
-.status-online {
-  color: var(--color-success);
+/* Vibrant Emerald Green for Online Status */
+.status-badge.online {
+  color: #10B981;
+  background-color: rgba(16, 185, 129, 0.06);
+  border-color: rgba(16, 185, 129, 0.15);
 }
 
-.status-offline {
+.status-badge.offline {
   color: var(--color-error);
-  animation: pulse-offline 2s infinite;
+  background-color: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.15);
 }
 
-@keyframes pulse-offline {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-badge.online .status-dot {
+  background-color: #10B981;
+}
+
+.status-badge.offline .status-dot {
+  background-color: var(--color-error);
+}
+
+/* High-end professional ping animation */
+.status-badge.online .status-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #10B981;
+  transform: translate(-50%, -50%);
+  animation: status-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes status-ping {
+  75%, 100% {
+    transform: translate(-50%, -50%) scale(2.8);
+    opacity: 0;
+  }
 }
 
 .header-menu-btn {
