@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { Copy, CheckCheck, Loader2 } from 'lucide-react';
 import { Bubble } from '../../ui/Bubble';
 import { GalleryGrid } from '../../ui/GalleryGrid';
+import { TypingIndicator } from '../../ui/TypingIndicator';
 import type { MessagePart } from '../../../domain/models/Message';
 
 interface MessageBlockRendererProps {
@@ -21,7 +22,7 @@ export function MessageBlockRenderer({ part }: MessageBlockRendererProps) {
   if (part.type === 'loading') {
     return (
       <Bubble variant="secondary" className="assistant-loading-bubble">
-        <Loader2 className="spinner text-accent" size={20} style={{ display: 'block', margin: '4px' }} />
+        <TypingIndicator />
       </Bubble>
     );
   }

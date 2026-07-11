@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, Send, Loader2 } from 'lucide-react';
+import { ChevronLeft, Send, Loader2, Sparkles } from 'lucide-react';
 import { useAgentStore } from '../../store/useAgentStore';
 import { useChatSessionStore } from '../../store/useChatSessionStore';
 import { useNotificationStore } from '../../store/useNotificationStore';
@@ -62,31 +62,36 @@ export function FallbackAgentPage({ agentId }: { agentId: string }) {
       </div>
 
       <div className="agent-page-form">
-        {schemaEntries.map(([fieldName, schema]) => {
-          const isLast = fieldName === lastFieldKey;
-          const submitButton = isLast ? (
-            <button 
-              className={`composer-send-btn ${isExecuting ? 'loading' : ''} ${isServerOffline ? 'offline' : ''}`}
-              onClick={handleExecute}
-              disabled={isExecuting || isServerOffline}
-              title="Execute Task"
-            >
-              {isExecuting ? <Loader2 size={16} className="spinner" /> : <Send size={16} />}
-            </button>
-          ) : undefined;
+        {schemaEntries.map(([fieldName, schema]) => (
+          <DynamicFieldRenderer
+            key={fieldName}
+            fieldName={fieldName}
+            schema={schema}
+            value={payload[fieldName]}
+            onChange={(val) => handleInputChange(fieldName, val)}
+            isLastField={fieldName === lastFieldKey}
+          />
+        ))}
+      </div>
 
-          return (
-            <DynamicFieldRenderer
-              key={fieldName}
-              fieldName={fieldName}
-              schema={schema}
-              value={payload[fieldName]}
-              onChange={(val) => handleInputChange(fieldName, val)}
-              isLastField={isLast}
-              submitButton={submitButton}
-            />
-          );
-        })}
+      <div className="agent-page-action-area">
+        <button 
+          className={`agent-execute-btn ${isExecuting ? 'loading' : ''} ${isServerOffline ? 'offline' : ''}`}
+          onClick={handleExecute}
+          disabled={isExecuting || isServerOffline}
+        >
+          {isExecuting ? (
+            <>
+              <Loader2 size={18} className="spinner" />
+              <span>Generating...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles size={18} />
+              <span>Run {selectedAgent.name}</span>
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

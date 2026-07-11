@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, PanelRight } from 'lucide-react';
 import { useAgentStore } from '../../../store/useAgentStore';
 import { useChatSessionStore } from '../../../store/useChatSessionStore';
 import { UserMessageCard } from './UserMessageCard';
@@ -32,8 +32,7 @@ export function ChatWidget({ agentId }: { agentId?: string } = {}) {
     <section className="chat-stream-panel">
       <div className="chat-stream-header">
         <div className="chat-tab active">
-          <Sparkles size={14} className="sparkles-icon" />
-          Dialogue & Report
+          <PanelRight size={16} /> Output Console
         </div>
       </div>
       

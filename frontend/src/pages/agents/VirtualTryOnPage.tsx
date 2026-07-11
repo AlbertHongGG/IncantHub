@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, Send, Loader2 } from 'lucide-react';
+import { ChevronLeft, Send, Loader2, Sparkles } from 'lucide-react';
 import { useAgentStore } from '../../store/useAgentStore';
 import { useChatSessionStore } from '../../store/useChatSessionStore';
 import { useNotificationStore } from '../../store/useNotificationStore';
@@ -87,17 +87,28 @@ export function VirtualTryOnPage({ agentId }: { agentId: string }) {
             value={payload.prompt || ''}
             onChange={(e) => updatePayload('prompt', e.target.value)}
             fullWidth
-            rightElement={
-              <button 
-                className={`composer-send-btn ${isExecuting ? 'loading' : ''} ${isServerOffline ? 'offline' : ''}`}
-                onClick={handleExecute}
-                disabled={isExecuting || isServerOffline}
-              >
-                {isExecuting ? <Loader2 size={16} className="spinner" /> : <Send size={16} />}
-              </button>
-            }
           />
         </div>
+      </div>
+
+      <div className="agent-page-action-area">
+        <button 
+          className={`agent-execute-btn ${isExecuting ? 'loading' : ''} ${isServerOffline ? 'offline' : ''}`}
+          onClick={handleExecute}
+          disabled={isExecuting || isServerOffline}
+        >
+          {isExecuting ? (
+            <>
+              <Loader2 size={18} className="spinner" />
+              <span>Generating...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles size={18} />
+              <span>Run Virtual Try-On</span>
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

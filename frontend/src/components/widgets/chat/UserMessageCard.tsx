@@ -1,4 +1,4 @@
-import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Bubble } from '../../ui/Bubble';
 import { GalleryGrid } from '../../ui/GalleryGrid';
 import type { ChatMessage } from '../../../domain/models/Message';
@@ -18,13 +18,9 @@ export function UserMessageCard({ message }: UserMessageCardProps) {
             return (
               <Bubble key={part.id} variant="primary">
                 <div className="markdown-prose user-prose">
-                  {/* Simplistic render for now, or use ReactMarkdown if needed */}
-                  {part.text.split('\n').map((line, i) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < part.text.split('\n').length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
+                  <ReactMarkdown>
+                    {part.text}
+                  </ReactMarkdown>
                 </div>
               </Bubble>
             );
