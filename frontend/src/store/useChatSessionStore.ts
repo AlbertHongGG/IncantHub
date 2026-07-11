@@ -135,6 +135,10 @@ export const useChatSessionStore = create<ChatSessionState>((set, get) => ({
                 const formattedParts = agent.formatAssistantMessageParts(chunk);
                 const currentParts = [...msg.parts];
                 
+                if (formattedParts.length === 0) {
+                  return msg;
+                }
+                
                 // Extremely simple merge: assuming the agent returns 1 part (text)
                 if (currentParts[0]?.type === 'text' && formattedParts[0]?.type === 'text') {
                   currentParts[0] = {

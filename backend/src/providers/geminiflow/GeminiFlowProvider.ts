@@ -52,8 +52,14 @@ export class GeminiFlowProvider implements AIProvider {
       );
 
       for await (const chunk of stream) {
-        // Defensively extract text from various possible keys
-        const textVal = chunk.text || (chunk as any).content || (chunk as any).delta || (chunk as any).response || '';
+        let textVal = '';
+        if (typeof chunk === 'string') {
+          textVal = chunk;
+        } else if (chunk && typeof chunk === 'object') {
+          textVal = chunk.text || (chunk as any).content || (chunk as any).delta || (chunk as any).response || (chunk as any).chunk || '';
+        } else {
+          textVal = String(chunk);
+        }
         
         yield {
           text: textVal,
