@@ -15,6 +15,7 @@ export class VirtualTryOnAgent extends BaseBackendAgent {
       category: 'image',
       description: 'Upload a source character, clothing, and an optional pose to generate a try-on image.',
       icon: 'image',
+      coverImage: '/agents/vton-cover.jpg',
       inputSchema: {
         source_image: {
           type: 'image',

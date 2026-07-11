@@ -17,6 +17,7 @@ export interface AgentMetadata {
   category: string;
   description: string;
   icon?: string;
+  coverImage?: string;
   inputSchema: InputSchema;
   tags?: string[];
 }

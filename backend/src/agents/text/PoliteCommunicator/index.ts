@@ -13,8 +13,9 @@ export class PoliteCommunicatorAgent extends BaseBackendAgent {
       id: 'polite-communicator',
       name: 'Polite Communicator',
       category: 'text',
-      description: 'Transforms casual or blunt text into a polite, professional message suitable for work.',
-      icon: 'message-square',
+      description: 'Converts blunt or informal text into a polite, professional message suitable for the workplace.',
+      icon: 'file-text',
+      coverImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80',
       inputSchema: {
         raw_message: {
           type: 'text',

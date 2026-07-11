@@ -124,29 +124,42 @@ export function HomePage() {
           return (
             <div 
               key={agent.id} 
-              className="gallery-card hover-lift"
+              className="gallery-card"
               style={{ animationDelay: `${idx * 50}ms` }}
               onClick={() => selectAgent(agent.id)}
             >
-              <div className="card-visual-header">
-                <div className="icon-wrapper">
-                  <IconComponent size={24} strokeWidth={1.5} />
+              {agent.coverImage ? (
+                <div className="card-cover-container">
+                  <img src={agent.coverImage} alt={agent.name} className="card-cover-image" />
                 </div>
-                <div className="card-action-hint">
-                  <ArrowRight size={16} />
+              ) : (
+                <div className="card-visual-header">
+                  <div className="icon-wrapper">
+                    <IconComponent size={24} strokeWidth={1.5} />
+                  </div>
+                  <div className="card-action-hint">
+                    <ArrowRight size={16} />
+                  </div>
                 </div>
-              </div>
-              <div className="card-content">
-                <h3 className="card-title">{agent.name}</h3>
-              </div>
-              <div className="card-tags-area" onClick={e => e.stopPropagation()}>
-                <TagInput 
-                  tags={agent.tags || []} 
-                  availableTags={availableTags}
-                  onAddTag={(tag) => addTagToAgent(agent.id, tag)}
-                  onRemoveTag={(tag) => removeTagFromAgent(agent.id, tag)}
-                  placeholder="Add a tag..."
-                />
+              )}
+              
+              <div className="card-body">
+                <div className="card-content">
+                  <h3 className="card-title">
+                    <IconComponent size={20} className="card-title-icon" strokeWidth={2} />
+                    {agent.name}
+                  </h3>
+                  <p className="card-description">{agent.description}</p>
+                </div>
+                <div className="card-tags-area" onClick={e => e.stopPropagation()}>
+                  <TagInput 
+                    tags={agent.tags || []} 
+                    availableTags={availableTags}
+                    onAddTag={(tag) => addTagToAgent(agent.id, tag)}
+                    onRemoveTag={(tag) => removeTagFromAgent(agent.id, tag)}
+                    placeholder="Add a tag..."
+                  />
+                </div>
               </div>
             </div>
           );
