@@ -1,21 +1,11 @@
 import type { AgentMetadata } from '../models/Agent';
 import { BaseFrontendAgent } from './BaseFrontendAgent';
-import { VirtualTryOnFrontendAgent } from './VirtualTryOnFrontendAgent';
-import { PoliteCommunicatorFrontendAgent } from './PoliteCommunicatorFrontendAgent';
-import { FallbackFrontendAgent } from './FallbackFrontendAgent';
+import { UniversalFrontendAgent } from './UniversalFrontendAgent';
 
 export class AgentFactory {
   static createAgent(metadata: AgentMetadata): BaseFrontendAgent {
-    const nameStr = metadata.name.toLowerCase();
-    
-    if (nameStr.includes('try on')) {
-      return new VirtualTryOnFrontendAgent(metadata);
-    }
-    
-    if (nameStr.includes('polite') || nameStr.includes('communicator')) {
-      return new PoliteCommunicatorFrontendAgent(metadata);
-    }
-    
-    return new FallbackFrontendAgent(metadata);
+    // We now have a 100% Schema-Driven UI.
+    // The UniversalFrontendAgent perfectly handles any agent based on its schema.
+    return new UniversalFrontendAgent(metadata);
   }
 }

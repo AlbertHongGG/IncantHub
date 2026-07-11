@@ -2,16 +2,18 @@ import { BaseFrontendAgent } from './BaseFrontendAgent';
 import type { MessagePart } from '../models/Message';
 import { generateId } from '../../utils/id';
 
-export class FallbackFrontendAgent extends BaseFrontendAgent {
+export class UniversalFrontendAgent extends BaseFrontendAgent {
   formatUserMessageParts(payload: Record<string, any>): MessagePart[] {
     const parts: MessagePart[] = [];
     let textContent = '';
     const allInputImages: string[] = [];
 
-    // Fallback logic: blindly iterate and group text vs images
     Object.entries(payload).forEach(([key, val]) => {
+      const fieldSchema = this.metadata.inputSchema?.[key];
+      const label = fieldSchema?.label || key;
+
       if (typeof val === 'string' && val.trim() !== '') {
-        textContent += (textContent ? '\n\n' : '') + `**${key}**: ${val}`;
+        textContent += (textContent ? '\n\n' : '') + `**${label}**:\n${val}`;
       } else if (Array.isArray(val) && val.length > 0) {
         allInputImages.push(...val);
       }
@@ -19,7 +21,7 @@ export class FallbackFrontendAgent extends BaseFrontendAgent {
 
     if (textContent) {
       parts.push({
-        id: generateId('fallback-txt'),
+        id: generateId('universal-txt'),
         type: 'text',
         text: textContent
       });
@@ -27,7 +29,7 @@ export class FallbackFrontendAgent extends BaseFrontendAgent {
 
     if (allInputImages.length > 0) {
       parts.push({
-        id: generateId('fallback-gallery'),
+        id: generateId('universal-gallery'),
         type: 'gallery',
         urls: allInputImages
       });
