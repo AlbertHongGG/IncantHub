@@ -1,12 +1,12 @@
 import React from 'react';
 import { WifiOff, RefreshCw } from 'lucide-react';
-import { usePromptStore } from '../../store/usePromptStore';
+import { useAgentStore } from '../../store/useAgentStore';
 import { Button } from './Button';
 import './OfflineFallback.css';
 
 export function OfflineFallback() {
-  const fetchAgents = usePromptStore(state => state.fetchAgents);
-  const isLoading = usePromptStore(state => state.isLoading);
+  const fetchAgents = useAgentStore(state => state.fetchAgents);
+  const isLoading = useAgentStore(state => state.isLoading);
 
   return (
     <div className="offline-portal animate-fade-in">

@@ -1,12 +1,12 @@
 import React from 'react';
-import { usePromptStore } from '../store/usePromptStore';
+import { useAgentStore } from '../store/useAgentStore';
 import { Hexagon, MoreVertical, LayoutGrid, Image as ImageIcon, Circle } from 'lucide-react';
 import { NotificationContainer } from './ui/Notification';
 import { Dropdown } from './ui/Dropdown';
 import './Layout.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const isServerOffline = usePromptStore(state => state.isServerOffline);
+  const isServerOffline = useAgentStore(state => state.isServerOffline);
 
   return (
     <div className="layout-root">

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { usePromptStore } from '../store/usePromptStore';
+import { useAgentStore } from '../store/useAgentStore';
 import { FileText, Image as ImageIcon, PenTool, Search, LayoutGrid, ArrowRight, Tags } from 'lucide-react';
 import { Input } from './ui/Input';
 import { TagInput } from './ui/TagInput';
@@ -26,7 +26,7 @@ export function PromptList() {
     isLoading, 
     searchQuery, 
     setSearchQuery 
-  } = usePromptStore();
+  } = useAgentStore();
 
   useEffect(() => {
     fetchAgents();

@@ -1,0 +1,23 @@
+.user-message-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100%;
+  margin-bottom: var(--space-6);
+}
+
+.user-message-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  max-width: 85%; /* Constrain max width for entire user message block */
+}
+
+.user-gallery-wrapper {
+  margin-bottom: var(--space-2);
+}
+
+.user-prose {
+  color: var(--color-text-primary);
+}

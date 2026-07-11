@@ -1,34 +1,10 @@
-export interface FieldSchema {
-  type: 'text' | 'image';
-  label: string;
-  required: boolean;
-  maxCount?: number;
-}
-
-export interface InputSchema {
-  [fieldName: string]: FieldSchema;
-}
-
-export interface AgentMetadata {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  icon?: string;
-  inputSchema: InputSchema;
-  tags?: string[];
-}
-
-export interface AgentExecutionResult {
-  type: 'text' | 'image' | 'mixed';
-  content: string;
-  images?: string[];
-  metadata?: Record<string, any>;
-}
+import type { AgentMetadata, AgentExecutionResult } from '../domain/models/Agent';
 
 export class APIError extends Error {
-  constructor(public statusCode: number, message: string) {
+  public statusCode: number;
+  constructor(statusCode: number, message: string) {
     super(message);
+    this.statusCode = statusCode;
     this.name = 'APIError';
   }
 }

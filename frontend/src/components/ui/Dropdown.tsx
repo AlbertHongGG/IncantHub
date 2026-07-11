@@ -35,10 +35,11 @@ function DropdownTrigger({ children, asChild = false }: { children: React.ReactN
   const { isOpen, setIsOpen } = React.useContext(DropdownContext);
   
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement, {
+    const childElement = children as React.ReactElement<any>;
+    return React.cloneElement(childElement, {
       onClick: (e: any) => {
         setIsOpen(!isOpen);
-        if (children.props.onClick) children.props.onClick(e);
+        if (childElement.props.onClick) childElement.props.onClick(e);
       }
     });
   }

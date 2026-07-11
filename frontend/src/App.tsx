@@ -1,14 +1,14 @@
 import React from 'react';
 import { Layout } from './components/Layout';
 import { PromptList } from './components/PromptList';
-import { PromptExecution } from './components/PromptExecution';
+import { WorkspacePage } from './pages/WorkspacePage';
 import { OfflineFallback } from './components/ui/OfflineFallback';
-import { usePromptStore } from './store/usePromptStore';
+import { useAgentStore } from './store/useAgentStore';
 
 function App() {
-  const selectedAgentId = usePromptStore(state => state.selectedAgentId);
-  const isServerOffline = usePromptStore(state => state.isServerOffline);
-  const agents = usePromptStore(state => state.agents);
+  const selectedAgentId = useAgentStore(state => state.selectedAgentId);
+  const isServerOffline = useAgentStore(state => state.isServerOffline);
+  const agents = useAgentStore(state => state.agents);
 
   // If server is offline and no agents are loaded, show fullscreen fallback portal
   if (isServerOffline && agents.length === 0) {
@@ -17,7 +17,9 @@ function App() {
 
   return (
     <Layout>
-      {selectedAgentId === null ? <PromptList /> : <PromptExecution />}
+      {selectedAgentId ? (
+        <WorkspacePage />
+      ) : <PromptList />}
     </Layout>
   );
 }

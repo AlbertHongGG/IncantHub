@@ -1,0 +1,106 @@
+.agent-config-panel {
+  flex: 0 0 340px;
+  background-color: var(--color-bg-base);
+  border-right: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+  transition: width 0.3s ease;
+}
+
+.agent-config-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.agent-config-header {
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-base);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.icon-back-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.icon-back-btn:hover {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+}
+
+.agent-title {
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-config-form {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.composer-send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(var(--color-accent-primary-rgb), 0.3);
+}
+
+.composer-send-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(var(--color-accent-primary-rgb), 0.4);
+}
+
+.composer-send-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.composer-send-btn:disabled {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.composer-send-btn.loading {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-accent-primary);
+}
