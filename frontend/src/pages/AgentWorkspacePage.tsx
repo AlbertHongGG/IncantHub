@@ -1,12 +1,12 @@
 import React from 'react';
-import { AgentConfigPanel } from '../features/agent-config-form/AgentConfigPanel';
+import { AgentFormRenderer } from '../features/agent-forms/AgentFormRenderer';
 import { ChatStreamPanel } from '../features/chat-stream/ChatStreamPanel';
-import './WorkspacePage.css';
+import './AgentWorkspacePage.css';
 
-export function WorkspacePage() {
+export function AgentWorkspacePage() {
   return (
     <div className="workspace-page-layout animate-fade-in">
-      <AgentConfigPanel />
+      <AgentFormRenderer />
       <ChatStreamPanel />
     </div>
   );

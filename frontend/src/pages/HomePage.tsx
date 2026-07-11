@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import { useAgentStore } from '../store/useAgentStore';
 import { FileText, Image as ImageIcon, PenTool, Search, LayoutGrid, ArrowRight, Tags } from 'lucide-react';
-import { Input } from './ui/Input';
-import { TagInput } from './ui/TagInput';
-import './PromptList.css';
+import { Input } from '../components/ui/Input';
+import { TagInput } from '../components/ui/TagInput';
+import { Button } from '../components/ui/Button';
+import './HomePage.css';
 
 const IconMap: Record<string, React.ElementType> = {
   'file-text': FileText,
@@ -11,7 +12,7 @@ const IconMap: Record<string, React.ElementType> = {
   'pen-tool': PenTool
 };
 
-export function PromptList() {
+export function HomePage() {
   const { 
     agents, 
     selectedTags,

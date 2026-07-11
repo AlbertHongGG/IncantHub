@@ -4,9 +4,9 @@ import { useAgentStore } from '../../store/useAgentStore';
 import { useChatSessionStore } from '../../store/useChatSessionStore';
 import { useNotificationStore } from '../../store/useNotificationStore';
 import { DynamicFieldRenderer } from './DynamicFieldRenderer';
-import './AgentConfigPanel.css';
+import './AgentForm.css';
 
-export function AgentConfigPanel() {
+export function FallbackForm() {
   const { agents, selectedAgentId, selectAgent, isServerOffline } = useAgentStore();
   const { sessions, updateSessionPayload, executeAgent } = useChatSessionStore();
   const addNotification = useNotificationStore(state => state.addNotification);

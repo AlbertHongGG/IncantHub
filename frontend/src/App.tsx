@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from './components/Layout';
-import { PromptList } from './components/PromptList';
-import { WorkspacePage } from './pages/WorkspacePage';
+import { HomePage } from './pages/HomePage';
+import { AgentWorkspacePage } from './pages/AgentWorkspacePage';
 import { OfflineFallback } from './components/ui/OfflineFallback';
 import { useAgentStore } from './store/useAgentStore';
 
@@ -18,8 +18,8 @@ function App() {
   return (
     <Layout>
       {selectedAgentId ? (
-        <WorkspacePage />
-      ) : <PromptList />}
+        <AgentWorkspacePage />
+      ) : <HomePage />}
     </Layout>
   );
 }
