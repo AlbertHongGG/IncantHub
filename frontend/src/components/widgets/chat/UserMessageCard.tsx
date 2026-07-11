@@ -1,7 +1,7 @@
 import React from 'react';
-import { Bubble } from '../../components/ui/Bubble';
-import { GalleryGrid } from '../../components/ui/GalleryGrid';
-import type { ChatMessage } from '../../domain/models/Message';
+import { Bubble } from '../../ui/Bubble';
+import { GalleryGrid } from '../../ui/GalleryGrid';
+import type { ChatMessage } from '../../../domain/models/Message';
 import './UserMessageCard.css';
 
 interface UserMessageCardProps {

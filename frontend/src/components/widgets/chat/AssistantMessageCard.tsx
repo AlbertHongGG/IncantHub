@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
-import type { ChatMessage } from '../../domain/models/Message';
+import type { ChatMessage } from '../../../domain/models/Message';
 import { MessageBlockRenderer } from './MessageBlockRenderer';
 import './AssistantMessageCard.css';
 

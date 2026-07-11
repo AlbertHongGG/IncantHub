@@ -1,19 +1,20 @@
 import React, { useEffect, useRef } from 'react';
 import { Sparkles } from 'lucide-react';
-import { useAgentStore } from '../../store/useAgentStore';
-import { useChatSessionStore } from '../../store/useChatSessionStore';
+import { useAgentStore } from '../../../store/useAgentStore';
+import { useChatSessionStore } from '../../../store/useChatSessionStore';
 import { UserMessageCard } from './UserMessageCard';
 import { AssistantMessageCard } from './AssistantMessageCard';
-import { Bubble } from '../../components/ui/Bubble';
-import './ChatStreamPanel.css';
+import { Bubble } from '../../ui/Bubble';
+import './ChatWidget.css';
 
-export function ChatStreamPanel() {
+export function ChatWidget({ agentId }: { agentId?: string } = {}) {
   const { agents, selectedAgentId } = useAgentStore();
   const { sessions } = useChatSessionStore();
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  const selectedAgent = agents.find(a => a.id === selectedAgentId);
-  const session = selectedAgentId ? sessions[selectedAgentId] : null;
+  const activeAgentId = agentId || selectedAgentId;
+  const selectedAgent = agents.find(a => a.id === activeAgentId);
+  const session = activeAgentId ? sessions[activeAgentId] : null;
 
   useEffect(() => {
     if (chatScrollRef.current) {

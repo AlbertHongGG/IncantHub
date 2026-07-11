@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
-import { AgentWorkspacePage } from './pages/AgentWorkspacePage';
+import { AgentRouter } from './pages/AgentRouter';
 import { OfflineFallback } from './components/ui/OfflineFallback';
 import { useAgentStore } from './store/useAgentStore';
 
@@ -18,7 +18,7 @@ function App() {
   return (
     <Layout>
       {selectedAgentId ? (
-        <AgentWorkspacePage />
+        <AgentRouter />
       ) : <HomePage />}
     </Layout>
   );

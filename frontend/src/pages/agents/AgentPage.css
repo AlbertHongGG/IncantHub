@@ -1,21 +1,10 @@
-.agent-config-panel {
-  flex: 0 0 340px;
-  background-color: var(--color-bg-base);
-  border-right: 1px solid var(--color-border-subtle);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 10;
-  transition: width 0.3s ease;
-}
-
-.agent-config-inner {
+.agent-page-left-panel {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.agent-config-header {
+.agent-page-header {
   padding: var(--space-4) var(--space-5);
   display: flex;
   align-items: center;
@@ -54,19 +43,13 @@
   text-overflow: ellipsis;
 }
 
-.agent-config-form {
+.agent-page-form {
   padding: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
   overflow-y: auto;
   flex: 1;
-}
-
-.form-field-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
 }
 
 .composer-send-btn {

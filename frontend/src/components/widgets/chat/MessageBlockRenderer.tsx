@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Copy, CheckCheck, Loader2 } from 'lucide-react';
-import { Bubble } from '../../components/ui/Bubble';
-import { GalleryGrid } from '../../components/ui/GalleryGrid';
-import type { MessagePart } from '../../domain/models/Message';
+import { Bubble } from '../../ui/Bubble';
+import { GalleryGrid } from '../../ui/GalleryGrid';
+import type { MessagePart } from '../../../domain/models/Message';
 
 interface MessageBlockRendererProps {
   part: MessagePart;

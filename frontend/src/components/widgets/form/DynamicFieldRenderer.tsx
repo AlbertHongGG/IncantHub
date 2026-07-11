@@ -1,7 +1,7 @@
 import React from 'react';
-import { Textarea } from '../../components/ui/Input';
-import { ImageUploadZone } from '../../components/ui/ImageUploadZone';
-import type { FieldSchema } from '../../domain/models/Agent';
+import { Textarea } from '../../ui/Input';
+import { ImageUploadZone } from '../../ui/ImageUploadZone';
+import type { FieldSchema } from '../../../domain/models/Agent';
 
 interface DynamicFieldRendererProps {
   fieldName: string;
