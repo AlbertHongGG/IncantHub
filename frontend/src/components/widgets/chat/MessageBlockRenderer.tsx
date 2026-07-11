@@ -20,8 +20,8 @@ export function MessageBlockRenderer({ part }: MessageBlockRendererProps) {
 
   if (part.type === 'loading') {
     return (
-      <Bubble variant="ghost" className="assistant-loading-bubble">
-        <Loader2 className="spinner text-accent" size={24} />
+      <Bubble variant="secondary" className="assistant-loading-bubble">
+        <Loader2 className="spinner text-accent" size={20} style={{ display: 'block', margin: '4px' }} />
       </Bubble>
     );
   }
