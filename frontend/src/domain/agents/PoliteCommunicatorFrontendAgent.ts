@@ -5,12 +5,21 @@ import { generateId } from '../../utils/id';
 export class PoliteCommunicatorFrontendAgent extends BaseFrontendAgent {
   formatUserMessageParts(payload: Record<string, any>): MessagePart[] {
     const parts: MessagePart[] = [];
+    let text = '';
     
-    if (payload.message && typeof payload.message === 'string' && payload.message.trim() !== '') {
+    if (payload.raw_message && typeof payload.raw_message === 'string' && payload.raw_message.trim() !== '') {
+      text += `**Original Message:**\n${payload.raw_message}`;
+    }
+    
+    if (payload.audience && typeof payload.audience === 'string' && payload.audience.trim() !== '') {
+      text += `\n\n**Target Audience:**\n${payload.audience}`;
+    }
+
+    if (text !== '') {
       parts.push({
         id: generateId('polite-txt'),
         type: 'text',
-        text: payload.message
+        text: text
       });
     }
 
