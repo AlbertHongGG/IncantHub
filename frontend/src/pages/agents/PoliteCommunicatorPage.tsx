@@ -3,7 +3,7 @@ import { ChevronLeft, Send, Loader2, Sparkles } from 'lucide-react';
 import { useAgentStore } from '../../store/useAgentStore';
 import { useChatSessionStore } from '../../store/useChatSessionStore';
 import { useNotificationStore } from '../../store/useNotificationStore';
-import { Textarea } from '../../components/ui/Input';
+import { Textarea, Input } from '../../components/ui/Input';
 import { SplitViewLayout } from '../../components/layouts/SplitViewLayout';
 import { ChatWidget } from '../../components/widgets/chat/ChatWidget';
 import { AgentFactory } from '../../domain/agents/AgentFactory';
@@ -37,7 +37,7 @@ export function PoliteCommunicatorPage({ agentId }: { agentId: string }) {
     const frontendAgent = AgentFactory.createAgent(selectedAgent);
 
     executeAgent(frontendAgent, payload);
-    updateSessionPayload(agentId, { ...payload, message: '' });
+    updateSessionPayload(agentId, { ...payload, message: '', audience: '' });
   };
 
   const leftForm = (
@@ -50,12 +50,21 @@ export function PoliteCommunicatorPage({ agentId }: { agentId: string }) {
       </div>
 
       <div className="agent-page-form">
-        <div className="form-field-group" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+        <div className="form-field-group">
           <Textarea 
             label="Original Message"
             placeholder="Type your blunt or informal message here..."
             value={payload.message || ''}
             onChange={(e) => updateSessionPayload(agentId, { ...payload, message: e.target.value })}
+            fullWidth
+          />
+        </div>
+        <div className="form-field-group">
+          <Input 
+            label="Target Audience"
+            placeholder="E.g., Your boss, a client, the marketing team..."
+            value={payload.audience || ''}
+            onChange={(e) => updateSessionPayload(agentId, { ...payload, audience: e.target.value })}
             fullWidth
           />
         </div>

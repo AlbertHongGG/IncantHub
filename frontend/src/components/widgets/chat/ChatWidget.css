@@ -68,8 +68,7 @@
   justify-content: center;
   text-align: center;
   color: var(--color-text-secondary);
-  max-width: 400px;
-  gap: var(--space-4);
+  max-width: 600px;
 }
 
 .empty-state-icon {
@@ -81,6 +80,7 @@
   align-items: center;
   justify-content: center;
   color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
 }
 
 .chat-empty-state h3 {
