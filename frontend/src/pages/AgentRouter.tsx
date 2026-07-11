@@ -28,7 +28,8 @@ function resolveAgentPage(agentId: string, agents: any[]): React.ElementType {
 }
 
 export function AgentRouter() {
-  const { agents, selectedAgentId } = useAgentStore();
+  const agents = useAgentStore(state => state.agents);
+  const selectedAgentId = useAgentStore(state => state.selectedAgentId);
   
   if (!selectedAgentId) return null;
 

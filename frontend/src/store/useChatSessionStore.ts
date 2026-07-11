@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { apiClient } from '../api/client';
 import type { ChatMessage, MessagePart } from '../domain/models/Message';
 
+import { BaseFrontendAgent } from '../domain/agents/BaseFrontendAgent';
+import { generateId } from '../utils/id';
+
 export interface AgentSession {
   payload: Record<string, any>;
   messages: ChatMessage[];
@@ -14,7 +17,7 @@ interface ChatSessionState {
   
   updateSessionPayload: (agentId: string, payload: Record<string, any>) => void;
   clearSessionHistory: (agentId: string) => void;
-  executeAgent: (agentId: string, payload: Record<string, any>) => Promise<void>;
+  executeAgent: (agent: BaseFrontendAgent, payload: Record<string, any>) => Promise<void>;
   
   // Helper to ensure session exists
   _initializeSessionIfNeeded: (agentId: string) => void;
@@ -27,7 +30,6 @@ const createDefaultSession = (): AgentSession => ({
   error: null
 });
 
-const generateId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
 export const useChatSessionStore = create<ChatSessionState>((set, get) => ({
   sessions: {},
@@ -65,43 +67,15 @@ export const useChatSessionStore = create<ChatSessionState>((set, get) => ({
     };
   }),
 
-  executeAgent: async (agentId: string, payload: Record<string, any>) => {
+  executeAgent: async (agent: BaseFrontendAgent, payload: Record<string, any>) => {
+    const agentId = agent.metadata.id;
     const { _initializeSessionIfNeeded } = get();
     _initializeSessionIfNeeded(agentId);
     
-    // Refresh session ref after potential initialization
     const currentSession = get().sessions[agentId];
     
-    // 1. Process User Input into Message Parts
-    const userParts: MessagePart[] = [];
-    let textContent = '';
-    const allInputImages: string[] = [];
-    
-    Object.entries(payload).forEach(([key, val]) => {
-      if (typeof val === 'string' && val.trim() !== '') {
-        textContent += (textContent ? '\n\n' : '') + `**${key}**: ${val}`;
-      } else if (Array.isArray(val) && val.length > 0) {
-        // Collect all images from all fields into a single gallery
-        allInputImages.push(...val);
-      }
-    });
-
-    if (textContent) {
-      userParts.push({
-        id: generateId('part-txt'),
-        type: 'text',
-        text: textContent
-      });
-    }
-
-    if (allInputImages.length > 0) {
-      userParts.push({
-        id: generateId('part-gallery'),
-        type: 'gallery',
-        urls: allInputImages
-      });
-    }
-
+    // 1. Delegate User Message creation to the Domain Agent!
+    const userParts = agent.formatUserMessageParts(payload);
     const userMessage: ChatMessage = {
       id: generateId('msg-user'),
       role: 'user',
@@ -131,42 +105,17 @@ export const useChatSessionStore = create<ChatSessionState>((set, get) => ({
       }
     }));
 
+    const abortController = new AbortController();
+
     try {
-      const result = await apiClient.executeAgent(agentId, payload);
+      const result = await apiClient.executeAgent(agentId, payload, { signal: abortController.signal });
       
-      // Update session with actual result
       set((state) => {
         const session = state.sessions[agentId];
         const newMessages = session.messages.map(msg => {
           if (msg.id === generatingMessageId) {
-            const resultParts: MessagePart[] = [];
-            
-            if (result.images && result.images.length > 0) {
-              // Assistant output images also go into a gallery if there are multiple, 
-              // or just a single image block
-              if (result.images.length > 1) {
-                resultParts.push({
-                  id: generateId('res-gallery'),
-                  type: 'gallery',
-                  urls: result.images
-                });
-              } else {
-                resultParts.push({
-                  id: generateId('res-img'),
-                  type: 'image',
-                  url: result.images[0]
-                });
-              }
-            }
-            
-            if (result.content) {
-              resultParts.push({
-                id: generateId('res-txt'),
-                type: 'text',
-                text: result.content
-              });
-            }
-
+            // Delegate Assistant formatting to Domain Agent
+            const resultParts = agent.formatAssistantMessageParts(result);
             return {
               ...msg,
               isGenerating: false,

@@ -6,11 +6,16 @@ import { useNotificationStore } from '../../store/useNotificationStore';
 import { Textarea } from '../../components/ui/Input';
 import { SplitViewLayout } from '../../components/layouts/SplitViewLayout';
 import { ChatWidget } from '../../components/widgets/chat/ChatWidget';
+import { AgentFactory } from '../../domain/agents/AgentFactory';
 import './AgentPage.css';
 
 export function PoliteCommunicatorPage({ agentId }: { agentId: string }) {
-  const { selectAgent, isServerOffline } = useAgentStore();
-  const { sessions, updateSessionPayload, executeAgent } = useChatSessionStore();
+  const selectAgent = useAgentStore(state => state.selectAgent);
+  const isServerOffline = useAgentStore(state => state.isServerOffline);
+  
+  const sessions = useChatSessionStore(state => state.sessions);
+  const updateSessionPayload = useChatSessionStore(state => state.updateSessionPayload);
+  const executeAgent = useChatSessionStore(state => state.executeAgent);
   const addNotification = useNotificationStore(state => state.addNotification);
 
   const session = sessions[agentId];
@@ -27,7 +32,11 @@ export function PoliteCommunicatorPage({ agentId }: { agentId: string }) {
       return;
     }
 
-    executeAgent(agentId, payload);
+    const selectedAgent = useAgentStore.getState().agents.find(a => a.id === agentId);
+    if (!selectedAgent) return;
+    const frontendAgent = AgentFactory.createAgent(selectedAgent);
+
+    executeAgent(frontendAgent, payload);
     updateSessionPayload(agentId, { ...payload, message: '' });
   };
 

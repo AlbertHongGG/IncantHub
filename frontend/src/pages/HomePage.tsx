@@ -13,21 +13,19 @@ const IconMap: Record<string, React.ElementType> = {
 };
 
 export function HomePage() {
-  const { 
-    agents, 
-    selectedTags,
-    selectedCategories,
-    availableTags,
-    toggleTagFilter,
-    toggleCategoryFilter,
-    addTagToAgent,
-    removeTagFromAgent,
-    selectAgent, 
-    fetchAgents, 
-    isLoading, 
-    searchQuery, 
-    setSearchQuery 
-  } = useAgentStore();
+  const agents = useAgentStore(state => state.agents);
+  const selectedTags = useAgentStore(state => state.selectedTags);
+  const selectedCategories = useAgentStore(state => state.selectedCategories);
+  const availableTags = useAgentStore(state => state.availableTags);
+  const toggleTagFilter = useAgentStore(state => state.toggleTagFilter);
+  const toggleCategoryFilter = useAgentStore(state => state.toggleCategoryFilter);
+  const addTagToAgent = useAgentStore(state => state.addTagToAgent);
+  const removeTagFromAgent = useAgentStore(state => state.removeTagFromAgent);
+  const selectAgent = useAgentStore(state => state.selectAgent);
+  const fetchAgents = useAgentStore(state => state.fetchAgents);
+  const isLoading = useAgentStore(state => state.isLoading);
+  const searchQuery = useAgentStore(state => state.searchQuery);
+  const setSearchQuery = useAgentStore(state => state.setSearchQuery);
 
   useEffect(() => {
     fetchAgents();

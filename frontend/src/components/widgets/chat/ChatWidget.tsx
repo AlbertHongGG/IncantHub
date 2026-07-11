@@ -8,8 +8,9 @@ import { Bubble } from '../../ui/Bubble';
 import './ChatWidget.css';
 
 export function ChatWidget({ agentId }: { agentId?: string } = {}) {
-  const { agents, selectedAgentId } = useAgentStore();
-  const { sessions } = useChatSessionStore();
+  const agents = useAgentStore(state => state.agents);
+  const selectedAgentId = useAgentStore(state => state.selectedAgentId);
+  const sessions = useChatSessionStore(state => state.sessions);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
   const activeAgentId = agentId || selectedAgentId;

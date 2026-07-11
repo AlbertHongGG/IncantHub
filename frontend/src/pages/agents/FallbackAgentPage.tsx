@@ -6,11 +6,17 @@ import { useNotificationStore } from '../../store/useNotificationStore';
 import { DynamicFieldRenderer } from '../../components/widgets/form/DynamicFieldRenderer';
 import { SplitViewLayout } from '../../components/layouts/SplitViewLayout';
 import { ChatWidget } from '../../components/widgets/chat/ChatWidget';
+import { AgentFactory } from '../../domain/agents/AgentFactory';
 import './AgentPage.css';
 
 export function FallbackAgentPage({ agentId }: { agentId: string }) {
-  const { agents, selectAgent, isServerOffline } = useAgentStore();
-  const { sessions, updateSessionPayload, executeAgent } = useChatSessionStore();
+  const agents = useAgentStore(state => state.agents);
+  const selectAgent = useAgentStore(state => state.selectAgent);
+  const isServerOffline = useAgentStore(state => state.isServerOffline);
+  
+  const sessions = useChatSessionStore(state => state.sessions);
+  const updateSessionPayload = useChatSessionStore(state => state.updateSessionPayload);
+  const executeAgent = useChatSessionStore(state => state.executeAgent);
   const addNotification = useNotificationStore(state => state.addNotification);
 
   const selectedAgent = agents.find(a => a.id === agentId);
@@ -29,7 +35,9 @@ export function FallbackAgentPage({ agentId }: { agentId: string }) {
       addNotification("Server is offline. Cannot execute task.", "error");
       return;
     }
-    executeAgent(agentId, payload);
+    
+    const frontendAgent = AgentFactory.createAgent(selectedAgent);
+    executeAgent(frontendAgent, payload);
     
     // Clear text inputs
     const newPayload = { ...payload };

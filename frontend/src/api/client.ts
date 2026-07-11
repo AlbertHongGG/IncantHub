@@ -43,10 +43,17 @@ class IncantHubAPIClient {
     return this.fetchJSON<AgentMetadata[]>('/prompts');
   }
 
-  public async executeAgent(id: string, payload: Record<string, any>): Promise<AgentExecutionResult> {
+  public async executeAgent(
+    id: string, 
+    payload: Record<string, any>, 
+    options?: { signal?: AbortSignal; onProgress?: (data: any) => void }
+  ): Promise<AgentExecutionResult> {
+    // In the future, this is where we'd implement SSE or Polling if onProgress is provided.
+    // For now, we just pass the signal to fetchJSON to allow cancellation of long-running requests.
     const data = await this.fetchJSON<{ result: AgentExecutionResult }>(`/prompts/${id}/execute`, {
       method: 'POST',
       body: JSON.stringify(payload),
+      signal: options?.signal,
     });
     return data.result;
   }
