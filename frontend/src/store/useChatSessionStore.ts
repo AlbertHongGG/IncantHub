@@ -108,18 +108,78 @@ export const useChatSessionStore = create<ChatSessionState>((set, get) => ({
     const abortController = new AbortController();
 
     try {
-      const result = await apiClient.executeAgent(agentId, payload, { signal: abortController.signal });
-      
+      const stream = apiClient.executeAgentStream(agentId, payload, { signal: abortController.signal });
+
+      let isFirstChunk = true;
+      let finalResultPayload: any = null;
+
+      for await (const chunk of stream) {
+        // We capture the last chunk's raw payload to format it if needed, or we just rely on chunks.
+        // Actually, chunk is of type AgentExecutionResult.
+        // For 'text' agents, we usually want to append.
+        finalResultPayload = chunk;
+        
+        set((state) => {
+          const session = state.sessions[agentId];
+          const newMessages = session.messages.map(msg => {
+            if (msg.id === generatingMessageId) {
+              
+              if (isFirstChunk) {
+                return {
+                  ...msg,
+                  isGenerating: true, // Still generating
+                  parts: agent.formatAssistantMessageParts(chunk)
+                };
+              } else {
+                // If streaming, we just append to text
+                const formattedParts = agent.formatAssistantMessageParts(chunk);
+                const currentParts = [...msg.parts];
+                
+                // Extremely simple merge: assuming the agent returns 1 part (text)
+                if (currentParts[0]?.type === 'text' && formattedParts[0]?.type === 'text') {
+                  currentParts[0] = {
+                    ...currentParts[0],
+                    text: currentParts[0].text + (formattedParts[0].text || '')
+                  };
+                } else {
+                  // Fallback: replace parts entirely (e.g. for images)
+                  return {
+                    ...msg,
+                    parts: formattedParts
+                  };
+                }
+
+                return {
+                  ...msg,
+                  parts: currentParts
+                };
+              }
+            }
+            return msg;
+          });
+
+          return {
+            sessions: {
+              ...state.sessions,
+              [agentId]: {
+                ...session,
+                messages: newMessages
+              }
+            }
+          };
+        });
+        
+        isFirstChunk = false;
+      }
+
+      // Stream completed
       set((state) => {
         const session = state.sessions[agentId];
         const newMessages = session.messages.map(msg => {
           if (msg.id === generatingMessageId) {
-            // Delegate Assistant formatting to Domain Agent
-            const resultParts = agent.formatAssistantMessageParts(result);
             return {
               ...msg,
-              isGenerating: false,
-              parts: resultParts
+              isGenerating: false
             };
           }
           return msg;
@@ -136,12 +196,12 @@ export const useChatSessionStore = create<ChatSessionState>((set, get) => ({
           }
         };
       });
+
     } catch (e: any) {
       console.error('[ChatSessionStore] Execute agent error:', e);
       
       set((state) => {
         const session = state.sessions[agentId];
-        // Replace loading part with error part, or add error message
         const newMessages = session.messages.filter(msg => msg.id !== generatingMessageId);
         
         return {

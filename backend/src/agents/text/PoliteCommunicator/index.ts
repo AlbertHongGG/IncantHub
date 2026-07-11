@@ -1,6 +1,6 @@
 import { BaseBackendAgent } from '../../BaseBackendAgent';
 import type { AgentMetadata, AgentExecutionResult } from '../../../types/agent';
-import { AIProvider } from '../../../../../../_Framework/MultiAgent/src/providers/AIProvider';
+import { AIProvider } from '../../../providers/AIProvider';
 import { buildSystemPrompt, buildUserPrompt } from './prompt';
 
 export class PoliteCommunicatorAgent extends BaseBackendAgent {
@@ -51,7 +51,37 @@ export class PoliteCommunicatorAgent extends BaseBackendAgent {
 
     return {
       type: 'text',
-      content: response.text
+      content: response.text,
+      metadata: {
+        tone: options?.tone || 'professional',
+        length: response.text.length
+      }
     };
+  }
+
+  protected async *processStream(inputs: Record<string, any>, options?: any): AsyncGenerator<AgentExecutionResult, void, unknown> {
+    const rawInput = inputs['input_text'];
+    if (!rawInput) throw new Error('Input text is required');
+
+    const { systemPrompt, prompt } = buildPoliteCommunicatorPayload(rawInput, options);
+
+    if (this.provider.generateStream) {
+      const stream = this.provider.generateStream({
+        prompt,
+        systemPrompt,
+        sessionId: options?.sessionId
+      });
+
+      for await (const chunk of stream) {
+        yield {
+          type: 'text',
+          content: chunk.text,
+          metadata: { isPartial: true }
+        };
+      }
+    } else {
+      const result = await this.process(inputs, options);
+      yield result;
+    }
   }
 }

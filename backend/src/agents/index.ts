@@ -1,5 +1,5 @@
 import { BaseBackendAgent } from './BaseBackendAgent';
-import { ProviderFactory } from '../../../../_Framework/MultiAgent/src/providers/ProviderFactory';
+import { ProviderFactory } from '../providers/ProviderFactory';
 
 import { PoliteCommunicatorAgent } from './text/PoliteCommunicator';
 import { VirtualTryOnAgent } from './image/VirtualTryOn';

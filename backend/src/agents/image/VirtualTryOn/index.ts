@@ -1,6 +1,6 @@
 import { BaseBackendAgent } from '../../BaseBackendAgent';
 import type { AgentMetadata, AgentExecutionResult } from '../../../types/agent';
-import { AIProvider } from '../../../../../../_Framework/MultiAgent/src/providers/AIProvider';
+import { AIProvider } from '../../../providers/AIProvider';
 import { buildVirtualTryOnPayload } from './prompt';
 
 export class VirtualTryOnAgent extends BaseBackendAgent {

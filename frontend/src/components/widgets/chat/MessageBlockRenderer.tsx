@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { Copy, CheckCheck, Loader2 } from 'lucide-react';
 import { Bubble } from '../../ui/Bubble';
 import { GalleryGrid } from '../../ui/GalleryGrid';
@@ -41,7 +44,10 @@ export function MessageBlockRenderer({ part }: MessageBlockRendererProps) {
     return (
       <Bubble variant="secondary" actions={copyAction}>
         <div className="markdown-prose">
-          <ReactMarkdown>
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm, remarkMath]} 
+            rehypePlugins={[rehypeKatex]}
+          >
             {part.text}
           </ReactMarkdown>
         </div>

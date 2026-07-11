@@ -1,6 +1,6 @@
 import { BaseBackendAgent } from '../../BaseBackendAgent';
 import type { AgentMetadata, AgentExecutionResult } from '../../../types/agent';
-import { AIProvider } from '../../../../../../_Framework/MultiAgent/src/providers/AIProvider';
+import { AIProvider } from '../../../providers/AIProvider';
 import { buildJapaneseAnalyzerPayload } from './prompt';
 
 export class JapaneseAnalyzerAgent extends BaseBackendAgent {
@@ -51,5 +51,33 @@ export class JapaneseAnalyzerAgent extends BaseBackendAgent {
         analyzed_length: rawInput.length
       }
     };
+  }
+
+  protected async *processStream(inputs: Record<string, any>, options?: any): AsyncGenerator<AgentExecutionResult, void, unknown> {
+    const rawInput = inputs['input_text'];
+    if (!rawInput) throw new Error('Input text is required');
+
+    const { systemPrompt, prompt } = buildJapaneseAnalyzerPayload(rawInput);
+
+    if (this.provider.generateStream) {
+      const stream = this.provider.generateStream({
+        prompt,
+        systemPrompt,
+        temperature: 0.3,
+        sessionId: options?.sessionId
+      });
+
+      for await (const chunk of stream) {
+        yield {
+          type: 'text',
+          content: chunk.text,
+          metadata: { isPartial: true }
+        };
+      }
+    } else {
+      // Fallback
+      const result = await this.process(inputs, options);
+      yield result;
+    }
   }
 }

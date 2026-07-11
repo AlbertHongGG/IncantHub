@@ -9,6 +9,7 @@ export function createAgentRoutes(service: AgentService, tagService: TagService)
 
   router.get('/', controller.getAllAgents);
   router.post('/:id/execute', controller.executeAgent);
+  router.post('/:id/stream', controller.executeStreamAgent);
   router.post('/:id/tags', controller.addTag);
   router.delete('/:id/tags/:tag', controller.removeTag);
 

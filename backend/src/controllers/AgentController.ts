@@ -28,6 +28,36 @@ export class AgentController {
     }
   };
 
+  executeStreamAgent = async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const inputs = req.body;
+    
+    const agent = this.service.getAgent(id);
+    if (!agent) {
+      res.status(404).json({ error: 'Agent not found' });
+      return;
+    }
+    
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    // Important: flush headers so the connection is established immediately
+    res.flushHeaders();
+
+    try {
+      const stream = agent.executeStream(inputs);
+      for await (const chunk of stream) {
+        console.log(`[AgentController] Streaming chunk for ${id}:`, chunk);
+        res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+      }
+      res.end();
+    } catch (error: any) {
+      console.error(`[AgentController] Error streaming agent ${id}:`, error);
+      res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+      res.end();
+    }
+  };
+
   addTag = (req: Request, res: Response) => {
     const id = req.params.id as string;
     const { tag } = req.body;
