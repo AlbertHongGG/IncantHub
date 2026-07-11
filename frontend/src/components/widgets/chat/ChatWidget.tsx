@@ -23,10 +23,10 @@ export function ChatWidget({ agentId }: { agentId?: string } = {}) {
     }
   }, [session?.messages]);
 
-  if (!selectedAgent || !session) return null;
+  if (!selectedAgent) return null;
 
-  const messages = session.messages || [];
-  const error = session.error;
+  const messages = session?.messages || [];
+  const error = session?.error;
 
   return (
     <section className="chat-stream-panel">
