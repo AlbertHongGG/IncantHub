@@ -6,6 +6,7 @@ import { Button } from './ui/Button';
 import { Textarea } from './ui/Input';
 import { Play, UploadCloud, X, Copy, ChevronLeft, LayoutPanelLeft, Send, Loader2, Sparkles, CheckCheck } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { ImageUploadZone } from './ui/ImageUploadZone';
 import './PromptExecution.css';
 
 export function PromptExecution() {
@@ -42,32 +43,6 @@ export function PromptExecution() {
 
   const handleInputChange = (fieldName: string, value: any) => {
     updateSessionPayload(selectedAgent.id, { ...payload, [fieldName]: value });
-  };
-
-  const handleFileChange = (fieldName: string, files: FileList | null, maxCount = 1) => {
-    if (!files || files.length === 0) return;
-    
-    const newFilesArray = Array.from(files).slice(0, maxCount);
-    Promise.all(
-      newFilesArray.map(file => {
-        return new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      })
-    ).then(base64Strings => {
-      const currentVal = payload[fieldName] || [];
-      const combined = [...currentVal, ...base64Strings].slice(0, maxCount);
-      handleInputChange(fieldName, combined);
-    });
-  };
-
-  const removeImage = (fieldName: string, indexToRemove: number) => {
-    const currentVal: string[] = payload[fieldName] || [];
-    const filtered = currentVal.filter((_, idx) => idx !== indexToRemove);
-    handleInputChange(fieldName, filtered.length > 0 ? filtered : undefined);
   };
 
   const handleExecute = () => {
@@ -132,53 +107,26 @@ export function PromptExecution() {
       const images: string[] = payload[fieldName] || [];
       
       return (
-        <div className="form-field-group" key={fieldName}>
-          <div className="field-header">
-            <span className="field-label">{schema.label}</span>
-            <span className="field-counter">{images.length}/{max}</span>
-          </div>
-
-          <div className="image-upload-zone">
-            {images.length < max && (
-              <div 
-                className="upload-trigger"
-                onClick={() => fileInputRefs.current[fieldName]?.click()}
-              >
-                <UploadCloud size={20} className="upload-icon" />
-                <input 
-                  type="file"
-                  multiple={max > 1}
-                  accept="image/*"
-                  ref={el => fileInputRefs.current[fieldName] = el}
-                  style={{ display: 'none' }}
-                  onChange={(e) => handleFileChange(fieldName, e.target.files, max)}
-                />
-              </div>
-            )}
-
-            {images.length > 0 && (
-              <div className="image-previews-grid">
-                {images.map((imgBase64, idx) => (
-                  <div key={idx} className="preview-item">
-                    <img src={imgBase64} alt={`Preview ${idx}`} />
-                    <button 
-                      type="button" 
-                      className="preview-remove-btn"
-                      onClick={() => removeImage(fieldName, idx)}
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+        <React.Fragment key={fieldName}>
+          <ImageUploadZone 
+            label={schema.label}
+            maxCount={max}
+            images={images}
+            onUpload={(base64Images) => {
+              const combined = [...images, ...base64Images].slice(0, max);
+              handleInputChange(fieldName, combined);
+            }}
+            onRemove={(idx) => {
+              const filtered = images.filter((_, i) => i !== idx);
+              handleInputChange(fieldName, filtered.length > 0 ? filtered : undefined);
+            }}
+          />
           {isLast && (
              <div className="standalone-send-actions">
                {sendButton}
              </div>
           )}
-        </div>
+        </React.Fragment>
       );
     }
 
@@ -235,7 +183,7 @@ export function PromptExecution() {
                 )}
                 
                 <div className="message-content-wrapper">
-                  <div className="message-bubble">
+                  <div className={`message-bubble ${(!msg.content && msg.images && msg.images.length > 0) ? 'image-only' : ''}`}>
                     {msg.isGenerating && (
                       <div className="generating-indicator">
                         <div className="dot" />
