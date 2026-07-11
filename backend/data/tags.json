@@ -5,5 +5,8 @@
   "virtual-try-on": [
     "456",
     "1234"
+  ],
+  "japanese-analyzer": [
+    "Ja"
   ]
 }
