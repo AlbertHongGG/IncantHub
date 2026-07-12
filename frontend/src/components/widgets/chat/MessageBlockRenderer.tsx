@@ -2,6 +2,7 @@ import React from 'react';
 import { Copy, CheckCheck, Loader2 } from 'lucide-react';
 import { Bubble } from '../../ui/Bubble';
 import { GalleryGrid } from '../../ui/GalleryGrid';
+import { ImageViewer, DownloadButton } from '../../ui/ImageViewer';
 import { TypingIndicator } from '../../ui/TypingIndicator';
 import type { MessagePart } from '../../../domain/models/Message';
 import { MarkdownRenderer } from './MarkdownRenderer';
@@ -42,7 +43,12 @@ export const MessageBlockRenderer: React.FC<MessageBlockRendererProps> = ({ part
   if (part.type === 'image' && part.url) {
     return (
       <div className="message-image-container">
-        <img src={part.url} alt="Assistant output" className="message-image" />
+        <ImageViewer 
+          src={part.url} 
+          alt="Generated Output" 
+          enableLightbox={true}
+          actions={<DownloadButton url={part.url} filename="incanthub-generated-image.png" />}
+        />
       </div>
     );
   }
