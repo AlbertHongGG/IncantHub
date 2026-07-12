@@ -8,7 +8,7 @@ export class JapaneseAnalyzerAgent extends BaseBackendAgent {
     super('JapaneseAnalyzer', provider);
   }
 
-  getMetadata(): AgentMetadata {
+  protected createMetadata(): AgentMetadata {
     return {
       id: 'japanese-analyzer',
       name: '日文語法結構解析器',

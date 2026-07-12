@@ -8,7 +8,7 @@ export class VirtualTryOnAgent extends BaseBackendAgent {
     super('VirtualTryOn', provider);
   }
 
-  getMetadata(): AgentMetadata {
+  protected createMetadata(): AgentMetadata {
     return {
       id: 'virtual-try-on',
       name: 'AI Virtual Try-On',

@@ -10,7 +10,22 @@ export abstract class BaseBackendAgent {
     this.provider = provider;
   }
 
-  abstract getMetadata(): AgentMetadata;
+  protected abstract createMetadata(): AgentMetadata;
+
+  /**
+   * Template Method for generating final metadata, including systemic defaults.
+   */
+  public getMetadata(): AgentMetadata {
+    const meta = this.createMetadata();
+    
+    // Default Cover Image Mechanism (Simplified & Deterministic)
+    if (!meta.coverImage) {
+      // Use picsum.photos with a seed based on the agent ID to generate a consistent but unique image per agent
+      meta.coverImage = `https://picsum.photos/seed/${encodeURIComponent(meta.id)}/600/400`;
+    }
+    
+    return meta;
+  }
 
   /**
    * Template Method for executing an Agent.

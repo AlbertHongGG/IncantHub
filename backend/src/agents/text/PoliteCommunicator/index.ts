@@ -8,14 +8,13 @@ export class PoliteCommunicatorAgent extends BaseBackendAgent {
     super('PoliteCommunicator', provider);
   }
 
-  getMetadata(): AgentMetadata {
+  protected createMetadata(): AgentMetadata {
     return {
       id: 'polite-communicator',
       name: 'Polite Communicator',
       category: 'text',
       description: 'Converts blunt or informal text into a polite, professional message suitable for the workplace.',
       icon: 'file-text',
-      coverImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80',
       inputSchema: {
         raw_message: {
           type: 'text',
@@ -60,10 +59,12 @@ export class PoliteCommunicatorAgent extends BaseBackendAgent {
   }
 
   protected async *processStream(inputs: Record<string, any>, options?: any): AsyncGenerator<AgentExecutionResult, void, unknown> {
-    const rawInput = inputs['input_text'];
-    if (!rawInput) throw new Error('Input text is required');
+    const rawInput = inputs['raw_message'];
+    if (!rawInput) throw new Error('Original Message is required');
+    const audience = inputs['audience'] || 'professional and polite';
 
-    const { systemPrompt, prompt } = buildPoliteCommunicatorPayload(rawInput, options);
+    const systemPrompt = buildSystemPrompt(audience);
+    const prompt = buildUserPrompt(rawInput);
 
     if (this.provider.generateStream) {
       const stream = this.provider.generateStream({

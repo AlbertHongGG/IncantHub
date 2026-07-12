@@ -8,33 +8,32 @@ export class CharacterRefSheetAgent extends BaseBackendAgent {
     super('CharacterRefSheet', provider);
   }
 
-  getMetadata(): AgentMetadata {
+  protected createMetadata(): AgentMetadata {
     return {
       id: 'character-ref-sheet',
       name: 'Character Reference Sheet',
       category: 'image',
       description: 'Generate a standard character reference sheet from a reference image.',
       icon: 'image',
-      coverImage: '/agents/ref-sheet-cover.jpg',
       inputSchema: {
         source_image: {
           type: 'image',
           uiType: 'image_upload',
-          label: '人物參考圖 (Reference Image)',
+          label: '人物參考圖',
           required: true,
           maxCount: 1
         },
         target_character_description: {
           type: 'text',
           uiType: 'textarea',
-          label: '目標人物描述 (Target Character Description)',
+          label: '目標人物描述',
           placeholder: '若參考圖中有多人，請描述目標人物的特徵...',
           required: false
         },
         style_prompt: {
           type: 'text',
           uiType: 'textarea',
-          label: '服裝/動作/表情/風格描述 (Style/Action Prompt)',
+          label: '服裝/動作/表情/風格描述',
           placeholder: '可選，輸入欲改變的服裝、動作、表情或風格...',
           required: false
         }
