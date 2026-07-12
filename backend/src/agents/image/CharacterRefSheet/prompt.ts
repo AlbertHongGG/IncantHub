@@ -20,11 +20,12 @@ The user has provided a reference image (Image [0]). You must analyze this image
 # LAYOUT & FORMAT CONSTRAINTS
 You MUST adhere strictly to the following layout for the generated image:
 1. **Background**: The background MUST be pure white.
-2. **Composition**: The final output MUST be a single image divided horizontally into two sections:
-   - **Left Section**: A close-up bust shot (head and shoulders) of the character.
+2. **No Text or Labels**: DO NOT generate any text, labels, titles, watermarks, or annotations anywhere on the image. The image must contain ONLY the character designs.
+3. **Composition**: The final output MUST be a single high-resolution image divided horizontally into two sections:
+   - **Left Section**: A large, highly detailed, tightly framed close-up bust shot (head and shoulders) of the character.
    - **Right Section**: A full-body character model sheet displaying three views: Front view, Side view, and Back view.
-3. **Aspect Ratio & Framing**: You MUST generate a wide landscape image (e.g., 16:9 or 21:9 aspect ratio) to comfortably fit all figures. Ensure that all four figures (the bust and the three full-body views) fit completely within the frame. There MUST be sufficient padding around all characters so that NO parts of their bodies (especially the back view on the far right) are cropped or cut off.
-4. **Spacing**: Leave adequate blank white space between the bust shot and the full-body views, and between each of the full-body views.
+4. **Aspect Ratio & Framing**: You MUST generate a wide landscape image (e.g., 16:9 or 21:9 aspect ratio) to comfortably fit all figures. Ensure that all four figures (the bust and the three full-body views) fit completely within the frame. There MUST be sufficient padding around all characters so that NO parts of their bodies are cropped or cut off.
+5. **Spacing & Focus**: Leave adequate blank white space between the bust shot and the full-body views. The bust shot on the left should be the primary visual focus, large and clear, while the three full-body views on the right should be neatly arranged side-by-side.
 
 # CHARACTER & CONSISTENCY CONSTRAINTS
 1. **Identity & Clothing**: You MUST maintain absolute consistency in the character's facial features, hairstyle, body proportions, and clothing across all four views (the close-up and the three full-body views).

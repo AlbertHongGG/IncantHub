@@ -45,7 +45,11 @@ export class CharacterRefSheetAgent extends BaseBackendAgent {
     const sourceImage = inputs['source_image'];
     const targetCharacterDescription = inputs['target_character_description'];
     const stylePrompt = inputs['style_prompt'];
-    const textPrompt = stylePrompt || 'Generate the character reference sheet based on the reference image.';
+    let textPrompt = stylePrompt || 'Generate the character reference sheet based on the reference image.';
+    
+    // Explicitly append a strong directive for a wide aspect ratio to the user prompt 
+    // to override any default square biases the model might have.
+    textPrompt += ' [IMPORTANT: Generate a wide landscape image (16:9 ratio) with NO text or labels.]';
 
     const { systemPrompt, allImages } = buildCharacterRefSheetPayload(
       sourceImage,
