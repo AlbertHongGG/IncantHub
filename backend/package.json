@@ -13,10 +13,12 @@
   "type": "commonjs",
   "dependencies": {
     "@google-cloud/vertexai": "^1.12.0",
+    "@types/sharp": "^0.31.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "multiagentframework": "file:../../_Framework/MultiAgent"
+    "multiagentframework": "file:../../_Framework/MultiAgent",
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import { AgentService } from '../services/AgentService';
 import { TagService } from '../services/TagService';
 
+import { PluginManager } from '../plugins/PluginManager';
+
 export class AgentController {
-  constructor(private service: AgentService, private tagService: TagService) {}
+  constructor(private service: AgentService, private tagService: TagService, private pluginManager: PluginManager) {}
 
   getAllAgents = (req: Request, res: Response) => {
     res.json(this.service.getAllMetadata());
@@ -21,7 +23,8 @@ export class AgentController {
     
     try {
       const result = await agent.execute(inputs);
-      res.json({ result });
+      const processedResult = await this.pluginManager.applyPlugins(result, agent.getMetadata());
+      res.json({ result: processedResult });
     } catch (error: any) {
       console.error(`[AgentController] Error executing agent ${id}:`, error);
       res.status(500).json({ error: error.message });
@@ -48,7 +51,8 @@ export class AgentController {
       const stream = agent.executeStream(inputs);
       for await (const chunk of stream) {
         console.log(`[AgentController] Streaming chunk for ${id}:`, chunk);
-        res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+        const processedChunk = await this.pluginManager.applyPlugins(chunk, agent.getMetadata());
+        res.write(`data: ${JSON.stringify(processedChunk)}\n\n`);
       }
       res.end();
     } catch (error: any) {
