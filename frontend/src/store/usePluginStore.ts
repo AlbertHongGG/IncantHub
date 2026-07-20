@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PluginInfo, fetchPlugins, updatePluginStatus } from '../api/pluginApi';
+import { fetchPlugins, updatePluginStatus, type PluginInfo } from '../api/pluginApi';
 
 interface PluginState {
   plugins: PluginInfo[];

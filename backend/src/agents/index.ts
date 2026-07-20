@@ -8,7 +8,6 @@ import { CharacterRefSheetAgent } from './image/CharacterRefSheet';
 import { KoreanIDPhotoAgent } from './image/KoreanIDPhoto';
 
 export function getAllAgents(): BaseBackendAgent[] {
-  // We use the ProviderFactory from the MultiAgent framework directly.
   return [
     new PoliteCommunicatorAgent(ProviderFactory.createProvider('polite_communicator')),
     new VirtualTryOnAgent(ProviderFactory.createProvider('virtual_try_on')),

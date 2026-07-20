@@ -12,7 +12,7 @@ export class APIError extends Error {
 class IncantHubAPIClient {
   private readonly baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:3001/api') {
+  constructor(baseUrl: string = import.meta.env.VITE_API_URL || 'http://localhost:3001/api') {
     this.baseUrl = baseUrl;
   }
 

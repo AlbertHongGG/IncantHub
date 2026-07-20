@@ -1,6 +1,6 @@
 import { BasePlugin, PluginConfig } from '../BasePlugin';
 import type { AgentExecutionResult, AgentMetadata } from '../../types/agent';
-import { removeWatermarkFromBuffer } from '@pilio/gemini-watermark-remover/node';
+import { removeWatermarkFromBuffer } from '../../libs/gemini-watermark-remover/sdk/node.js';
 import sharp from 'sharp';
 
 export class GeminiWatermarkRemoverPlugin extends BasePlugin {

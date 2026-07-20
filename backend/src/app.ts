@@ -20,10 +20,7 @@ export async function createApp() {
   const pluginSettingsService = new PluginSettingsService();
   const pluginManager = new PluginManager(pluginSettingsService);
   await agentService.init();
-
-  // Load implementation plugins (will add Gemini watermark later)
-  const { GeminiWatermarkRemoverPlugin } = await import('./plugins/implementations/GeminiWatermarkRemoverPlugin');
-  pluginManager.registerPlugin(new GeminiWatermarkRemoverPlugin());
+  await pluginManager.init();
 
   // Mount Routes
   app.use('/api/prompts', createAgentRoutes(agentService, tagService, pluginManager));

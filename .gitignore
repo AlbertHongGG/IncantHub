@@ -37,3 +37,6 @@ backend/dist/
 *.sln
 *.sw?
 .agents/
+
+
+*/test-watermark.ts

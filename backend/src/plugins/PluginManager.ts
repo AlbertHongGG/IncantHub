@@ -1,11 +1,21 @@
 import { BasePlugin } from './BasePlugin';
 import { PluginSettingsService } from '../services/PluginSettingsService';
 import type { AgentExecutionResult, AgentMetadata } from '../types/agent';
+import { getAllPlugins } from './index';
 
 export class PluginManager {
   private plugins: Map<string, BasePlugin> = new Map();
 
   constructor(private settingsService: PluginSettingsService) {}
+
+  public async init() {
+    console.log('[PluginManager] Initializing plugins...');
+    const allPlugins = getAllPlugins();
+    for (const plugin of allPlugins) {
+      this.registerPlugin(plugin);
+    }
+    console.log(`[PluginManager] Successfully loaded ${this.plugins.size} plugins.`);
+  }
 
   public registerPlugin(plugin: BasePlugin) {
     if (this.plugins.has(plugin.id)) {
