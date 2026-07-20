@@ -114,7 +114,7 @@
   }
 }
 
-.header-menu-btn {
+.header-menu-btn, .header-icon-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,9 +123,12 @@
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
   transition: all var(--transition-fast);
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
-.header-menu-btn:hover {
+.header-menu-btn:hover, .header-icon-button:hover {
   background-color: var(--color-bg-subtle);
   color: var(--color-text-primary);
 }

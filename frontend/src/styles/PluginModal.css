@@ -1,0 +1,215 @@
+/* Modal Overlay (Glassmorphism + Fade In) */
+.plugin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: overlayFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Modal Container (Scale Up + Fade In) */
+.plugin-modal-container {
+  width: 90%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 24px 48px -12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center center;
+}
+
+/* Header */
+.plugin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 16px 24px;
+}
+
+.plugin-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.plugin-modal-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-bg-subtle, #f1f5f9);
+  color: var(--color-text-secondary, #64748b);
+  border-radius: 8px;
+}
+
+.plugin-modal-title-group h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.plugin-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.plugin-modal-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Body */
+.plugin-modal-body {
+  padding: 20px 24px 24px 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Loading & Empty States */
+.plugin-modal-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+/* Grouped List Styles */
+.settings-group {
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.settings-row:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.settings-row-info {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.plugin-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Custom Apple-style Switch */
+.apple-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.apple-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.apple-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 24px;
+}
+
+.apple-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+input:checked + .apple-slider {
+  background-color: #111111; /* Sleek Black */
+}
+
+input:checked + .apple-slider:before {
+  transform: translateX(20px);
+}
+
+/* Animations */
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

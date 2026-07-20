@@ -4,7 +4,7 @@ import { HomePage } from './pages/HomePage';
 import { UniversalAgentPage } from './pages/agents/UniversalAgentPage';
 import { OfflineFallback } from './components/ui/OfflineFallback';
 import { useAgentStore } from './store/useAgentStore';
-import { PluginSettings } from './components/PluginSettings';
+import { PluginModal } from './components/PluginModal';
 
 function App() {
   const selectedAgentId = useAgentStore(state => state.selectedAgentId);
@@ -23,9 +23,7 @@ function App() {
           <UniversalAgentPage agentId={selectedAgentId} />
         ) : <HomePage />}
       </Layout>
-      <div style={{ position: 'fixed', bottom: '20px', left: '20px', zIndex: 999 }}>
-        <PluginSettings />
-      </div>
+      <PluginModal />
     </>
   );
 }

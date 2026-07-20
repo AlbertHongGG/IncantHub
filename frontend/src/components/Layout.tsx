@@ -1,12 +1,14 @@
 import React from 'react';
 import { useAgentStore } from '../store/useAgentStore';
-import { Hexagon, MoreVertical, LayoutGrid, Image as ImageIcon, Circle } from 'lucide-react';
+import { useUIStore } from '../store/useUIStore';
+import { Hexagon, MoreVertical, LayoutGrid, Image as ImageIcon, Circle, Blocks } from 'lucide-react';
 import { NotificationContainer } from './ui/Notification';
 import { Dropdown } from './ui/Dropdown';
 import './Layout.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const isServerOffline = useAgentStore(state => state.isServerOffline);
+  const openPluginModal = useUIStore(state => state.openPluginModal);
 
   return (
     <div className="layout-root">
@@ -21,6 +23,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="header-controls">
+          <button 
+            className="header-icon-button plugin-trigger" 
+            onClick={openPluginModal}
+            title="Plugins"
+          >
+            <Blocks size={18} />
+          </button>
+          
           <div className={`status-badge ${isServerOffline ? 'offline' : 'online'}`} title={isServerOffline ? 'Server Offline' : 'Server Connected'}>
             <div className="status-dot"></div>
             <span className="status-text">{isServerOffline ? 'Offline' : 'Connected'}</span>
